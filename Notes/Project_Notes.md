@@ -12,3 +12,5 @@ Downloaded dataset currently looks like this
 
 This is obviously not what I want but it is a little cool that there is the classification dataset, 2d segmentation and 3d segmentation, I need the 2d seg or just seg. I will just drag files into folders using my mouse, I'm sick of writing code to format files :)
 
+Workflow:
+Copy these into a folder that is not the zip folder (time estimated at ~2 hours)> upload to google drive > mount > and then unfortunately I will have to write python to properly format the files :(
