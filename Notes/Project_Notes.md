@@ -25,3 +25,29 @@ I am currently downloading the dataset to google drive so that I can mount it, b
 I tried downloading the dataset, it includes 82000 items. this was too much and I quickly ran out of space and had to delete everything. deleting everything is taking forever. Once I delete everything I think I am going to convert to a zip file, unfortunately I am not sure if that will be able to be downloaded either. This is a pretty hefty dataset. 
 
 <img width="802" height="388" alt="image" src="https://github.com/user-attachments/assets/e418d7d2-cc72-4557-87cc-ffccdb701ea9" />
+
+So apparently, for segmentation, the data was in seg and seg3d (which would have been nice if it was explained in the readme). I suppose that because its technically 3 dimenional, not in an x y z sorta way but it just has another dimension to it even though it's really just a 2d image. It appears each file contains 8 slices of 369x369 pixels. The displayed central slices confirm this. The sample files VIBRANT+C2.npy from both the images and labels directories share the same name, strongly suggesting that files with identical names across these two folders represent corresponding image and mask pairs.
+
+Here's what BeastDM_DataInspecToProces does for me right now: 
+
+Unzipped Dataset: The BreastDMDS.zip file was unzipped to /content/BreastDMDS_unzipped.
+
+Dataset Reorganization Attempt (and correction): Initially, there was an attempt to classify files into 'B' and 'M' folders, which was later identified as not the user's primary goal for this task and also caused file overwrites. We then corrected this by reverting the DATASET path to the original unzipped location.
+
+NPY File Inspection: inspected sample .npy files from the seg3D/val/images and seg3D/val/labels directories. This revealed that the data was float64, ranged from 0.0 to 255.0, and consisted of 3D volumes (e.g., (369, 369, 8)), with images and masks sharing the same base filenames.
+
+Conversion and Reorganization to PNG: Based on the inspection, we implemented code to:
+Create new /content/segmentation_dataset/images and /content/segmentation_dataset/masks directories.
+
+Iterate through all seg3D splits (train, val, test).
+
+Load each .npy file.
+
+Extract the central 2D slice from 3D volumes.
+
+Scale the data to 0-255 and convert it to uint8.
+
+Save the processed data as .png files using a unique naming convention (split_patientID_originalFileName.png) to prevent overwrites.
+Verification: We confirmed that the new dataset structure is correct and that the files are appropriately organized, with 699 image files and 717 mask files created.
+
+The DATASET variable now points to /content/segmentation_dataset
