@@ -1,6 +1,7 @@
 6/28/2026
 
-**Creating the Dataset**
+**Creating the Dataset
+**
 
 The dataset given from the link is very obscure and difficult to format. I wonder why they didnt just give me the correct useable dataset. I need the dataset to be in this format: 
 
@@ -14,3 +15,9 @@ This is obviously not what I want but it is a little cool that there is the clas
 
 Workflow:
 Copy these into a folder that is not the zip folder (time estimated at ~2 hours)> upload to google drive > mount > and then unfortunately I will have to write python to properly format the files :(
+
+6/29/2026
+**Trying to get the dataset to work**
+
+I have encountered so many issues with the dataset it is insane. If this were a project submitted to a professor I think it is safe to assume that they recieved a D as their grade for their work. The requirements for their formatting do not at all match what they give you and they do not readily supply a data splitting function. I will have to create one myself!
+I am currently downloading the dataset to google drive so that I can mount it, but the estimated time to download is hours, and I believe it will surely take that long.
