@@ -16,6 +16,8 @@ This is obviously not what I want but it is a little cool that there is the clas
 Workflow:
 Copy these into a folder that is not the zip folder (time estimated at ~2 hours)> upload to google drive > mount > and then unfortunately I will have to write python to properly format the files :(
 
+
+
 6/29/2026
 
 **Trying to get the dataset to work**
@@ -51,3 +53,73 @@ Save the processed data as .png files using a unique naming convention (split_pa
 Verification: We confirmed that the new dataset structure is correct and that the files are appropriately organized, with 699 image files and 717 mask files created.
 
 The DATASET variable now points to /content/segmentation_dataset
+
+
+
+6/30/2026
+
+**Attempting to make the split function**
+
+This is currently the structure of the file, but its not even all that we need because the corresponding mask data for segmentation task is in seg3d because it has the 8 layer dimension that I did not account for. That being said this is the current structure of seg: 
+
+Depth = 2 
+
+BreastDMDS_unzipped/
+    seg3D/
+        val/
+        train/
+        test/
+    seg/
+        val/
+        train/
+        test/
+    cls/
+        img9Se/
+        GLCM/
+        img17Se/
+        LBP/
+
+Currently the code in this ipynb file does:
+
+Setup and Unzipping // It initializes by importing necessary libraries, mounts Google Drive, and unzips the main dataset from a .zip file.
+Initial Data Inspection // The code then looks at the directory structure of the unzipped dataset and loads a sample .npy file to understand its data type, shape, and value range. This makes it easy to see how far I am and how far I need to go to make it the desired structure.
+Classification Data Organization // Processes .npy files to organize them into distinct 'Benign' and 'Malignant' directories, preparing the data for a classification task.
+Segmentation Data Processing and Visualization // Identifies 3D image and mask .npy volumes from the segmentation part of the dataset, extracts a central 2D slice from each, and displays these slices for visual inspection.
+Segmentation Data Conversion // Finally, it converts these extracted 2D slices from .npy format into .png image files, scaling their pixel values, and saving them into separate 'images' and 'masks' directories for segmentation tasks.
+
+All the current cells listed: 
+(copy and pasted)
+Cell ID: EjrpEys8Bwzz, Title: Notebook Overview and Purpose
+Cell ID: mpDxIsGgDMCB, Title: Import Libraries
+Cell ID: cVA52J2CB3O5, Title: Mount Google Drive
+Cell ID: 4n5PiRY7Cdgh, Title: Initial Dataset Path and Structure Exploration (Original Zip)
+Cell ID: 5a77de7d, Title: Unzip Dataset
+Cell ID: e40be580, Title: Directory Structure Inspection (Unzipped)
+Cell ID: b1653db6, Title: Organize Classification Data (Benign/Malignant)
+Cell ID: 579f06a3, Title: Verify Classification Dataset Structure
+Cell ID: 3ce6ee7a, Title: Inspect Sample NPY File
+Cell ID: cf4550ea, Title: Visualize Sample Segmentation Image and Mask Slices
+Cell ID: 8645d641, Title: Convert Segmentation NPY to PNG (2D Slices)
+Cell ID: ce174ae4, Title: Verify Converted Segmentation Dataset Structure
+
+We now have this structure for data: 
+
+============================ New Segmentation Dataset Structure ============================
+segmentation_dataset/
+    masks/
+        test_BreaDM-Be-2019_VIBRANT.png
+        test_BreaDM-Be-2113_SUB2.png
+        train_BreaDM-Be-1805_SUB2.png
+        train_BreaDM-Be-1809_SUB2.png
+        train_BreaDM-Ma-2111_VIBRANT.png
+        ...(709) more files
+    images/
+        test_BreaDM-Be-2019_VIBRANT.png
+        test_BreaDM-Be-2113_SUB2.png
+        train_BreaDM-Be-1805_SUB2.png
+        train_BreaDM-Be-1809_SUB2.png
+        train_BreaDM-Ma-2111_VIBRANT.png
+        ...(691) more files
+
+Total image files: 696
+Total mask files: 714
