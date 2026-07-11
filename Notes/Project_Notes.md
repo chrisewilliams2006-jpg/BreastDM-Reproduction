@@ -1,8 +1,6 @@
 ## 6/28/2026 
 
-### Creating the Dataset
-
-* The dataset given from the link is very obscure and difficult to format. I wonder why they didnt just give me the correct useable dataset. I need the dataset to be in this format: 
+### Creating the Dataset, needs to be in this format:
 
 <img width="512" height="366" alt="image" src="https://github.com/user-attachments/assets/60480a30-1247-4220-86d7-c22070cd1a6d" />
 
@@ -25,7 +23,7 @@
 * I am currently downloading the dataset to google drive so that I can mount it, but the estimated time to download is hours, and I believe it will surely take that long.
 * I tried downloading the dataset, it includes **82000** items. this was too much and I quickly ran out of space and had to delete everything. deleting everything is taking forever. Once I delete everything I think I am going to convert to a zip file, unfortunately I am not sure if that will be able to be downloaded either. This is a pretty hefty dataset.
 
-### Example of my struggle
+### Example of my struggle:
 
 <img width="802" height="388" alt="image" src="https://github.com/user-attachments/assets/e418d7d2-cc72-4557-87cc-ffccdb701ea9" />
 
@@ -61,11 +59,12 @@ Verification: We confirmed that the new dataset structure is correct and that th
 
 ### Attempting to make the split function
 
-* This is currently the structure of the file, but its not even all that we need because the corresponding mask data for segmentation task is in seg3d because it has the 8 layer dimension that I did not account for. That being said this is the current structure of seg: 
+* This is currently the structure of the file, but its not even all that we need because the corresponding mask data for segmentation task is in seg3d because it has the 8 layer dimension that I did not account for.
 
-
-Depth = 2 
+### Current structure of seg:
 ```
+Depth = 2 
+
 BreastDMDS_unzipped/
     seg3D/
         val/
