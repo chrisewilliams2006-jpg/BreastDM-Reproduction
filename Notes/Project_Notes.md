@@ -129,3 +129,11 @@ segmentation_dataset/
 Total image files: 696
 Total mask files: 714
 ```
+---
+## 7/11/2026
+
+### Trying to finish data preprocessing and building ResNet for Segmentation task
+* I think there is an issue with the data splitting function.
+* it comes from a inconsistency with the 3d-2d slivering
+* I will try to find the severity of the issue, how to fix it and maybe find an alternative
+* then I will properly reproduce! should be easy
