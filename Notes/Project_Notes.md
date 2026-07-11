@@ -1,4 +1,4 @@
-***6/28/2026
+###6/28/2026
 
 **Creating the Dataset
 **
@@ -18,7 +18,7 @@ Copy these into a folder that is not the zip folder (time estimated at ~2 hours)
 
 
 ---
-***6/29/2026
+###6/29/2026
 
 **Trying to get the dataset to work**
 
@@ -56,7 +56,7 @@ The DATASET variable now points to /content/segmentation_dataset
 
 
 ---
-***6/30/2026
+###6/30/2026
 
 **Attempting to make the split function**
 
