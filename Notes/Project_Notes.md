@@ -1,7 +1,6 @@
-### 6/28/2026 
+## 6/28/2026 
 
-**Creating the Dataset
-**
+### Creating the Dataset
 
 The dataset given from the link is very obscure and difficult to format. I wonder why they didnt just give me the correct useable dataset. I need the dataset to be in this format: 
 
@@ -18,9 +17,9 @@ Copy these into a folder that is not the zip folder (time estimated at ~2 hours)
 
 
 ---
-### 6/29/2026
+## 6/29/2026
 
-**Trying to get the dataset to work**
+### Trying to get the dataset to work
 
 I have encountered so many issues with the dataset it is insane. If this were a project submitted to a professor I think it is safe to assume that they recieved a D as their grade for their work. The requirements for their formatting do not at all match what they give you and they do not readily supply a data splitting function. I will have to create one myself!
 I am currently downloading the dataset to google drive so that I can mount it, but the estimated time to download is hours, and I believe it will surely take that long.
@@ -56,9 +55,9 @@ The DATASET variable now points to /content/segmentation_dataset
 
 
 ---
-### 6/30/2026
+## 6/30/2026
 
-**Attempting to make the split function**
+### Attempting to make the split function
 
 This is currently the structure of the file, but its not even all that we need because the corresponding mask data for segmentation task is in seg3d because it has the 8 layer dimension that I did not account for. That being said this is the current structure of seg: 
 
