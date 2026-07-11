@@ -6,7 +6,7 @@
 
 <img width="512" height="366" alt="image" src="https://github.com/user-attachments/assets/60480a30-1247-4220-86d7-c22070cd1a6d" />
 
-* Downloaded dataset currently looks like this: 
+### Downloaded dataset currently looks like this: 
 
 <img width="1928" height="244" alt="image" src="https://github.com/user-attachments/assets/e4f44f0a-b4ca-4082-b14e-5f8d9a1ce65a" />
 
@@ -23,7 +23,7 @@
 
 * I have encountered so many issues with the dataset it is insane. If this were a project submitted to a professor I think it is safe to assume that they recieved a D as their grade for their work. The requirements for their formatting do not at all match what they give you and they do not readily supply a data splitting function. I will have to create one myself!
 * I am currently downloading the dataset to google drive so that I can mount it, but the estimated time to download is hours, and I believe it will surely take that long.
-* I tried downloading the dataset, it includes 82000 items. this was too much and I quickly ran out of space and had to delete everything. deleting everything is taking forever. Once I delete everything I think I am going to convert to a zip file, unfortunately I am not sure if that will be able to be downloaded either. This is a pretty hefty dataset.
+* I tried downloading the dataset, it includes **82000** items. this was too much and I quickly ran out of space and had to delete everything. deleting everything is taking forever. Once I delete everything I think I am going to convert to a zip file, unfortunately I am not sure if that will be able to be downloaded either. This is a pretty hefty dataset.
 
 ### Example of my struggle
 
@@ -63,8 +63,9 @@ Verification: We confirmed that the new dataset structure is correct and that th
 
 * This is currently the structure of the file, but its not even all that we need because the corresponding mask data for segmentation task is in seg3d because it has the 8 layer dimension that I did not account for. That being said this is the current structure of seg: 
 
-Depth = 2 
 
+Depth = 2 
+```
 BreastDMDS_unzipped/
     seg3D/
         val/
@@ -80,16 +81,19 @@ BreastDMDS_unzipped/
         img17Se/
         LBP/
 
-Currently the code in this ipynb file does:
+```
+### Currently the code in this ipynb file does:
 
-Setup and Unzipping // It initializes by importing necessary libraries, mounts Google Drive, and unzips the main dataset from a .zip file.
-Initial Data Inspection // The code then looks at the directory structure of the unzipped dataset and loads a sample .npy file to understand its data type, shape, and value range. This makes it easy to see how far I am and how far I need to go to make it the desired structure.
-Classification Data Organization // Processes .npy files to organize them into distinct 'Benign' and 'Malignant' directories, preparing the data for a classification task.
-Segmentation Data Processing and Visualization // Identifies 3D image and mask .npy volumes from the segmentation part of the dataset, extracts a central 2D slice from each, and displays these slices for visual inspection.
-Segmentation Data Conversion // Finally, it converts these extracted 2D slices from .npy format into .png image files, scaling their pixel values, and saving them into separate 'images' and 'masks' directories for segmentation tasks.
+* Setup and Unzipping // It initializes by importing necessary libraries, mounts Google Drive, and unzips the main dataset from a .zip file.
+* Initial Data Inspection // The code then looks at the directory structure of the unzipped dataset and loads a sample .npy file to understand its data type, shape, and value range. This makes it easy to see how far I am and how far I need to go to make it the desired structure.
+* Classification Data Organization // Processes .npy files to organize them into distinct 'Benign' and 'Malignant' directories, preparing the data for a classification task.
+* Segmentation Data Processing and Visualization // Identifies 3D image and mask .npy volumes from the segmentation part of the dataset, extracts a central 2D slice from each, and displays these slices for visual inspection.
+* Segmentation Data Conversion // Finally, it converts these extracted 2D slices from .npy format into .png image files, scaling their pixel values, and saving them into separate 'images' and 'masks' directories for segmentation tasks.
 
-All the current cells listed: 
+### All the current cells listed: 
+
 (copy and pasted)
+```
 Cell ID: EjrpEys8Bwzz, Title: Notebook Overview and Purpose
 Cell ID: mpDxIsGgDMCB, Title: Import Libraries
 Cell ID: cVA52J2CB3O5, Title: Mount Google Drive
@@ -102,9 +106,9 @@ Cell ID: 3ce6ee7a, Title: Inspect Sample NPY File
 Cell ID: cf4550ea, Title: Visualize Sample Segmentation Image and Mask Slices
 Cell ID: 8645d641, Title: Convert Segmentation NPY to PNG (2D Slices)
 Cell ID: ce174ae4, Title: Verify Converted Segmentation Dataset Structure
-
-We now have this structure for data: 
-
+```
+### We now have this structure for data: 
+```
 ============================ New Segmentation Dataset Structure ============================
 segmentation_dataset/
     masks/
@@ -124,3 +128,4 @@ segmentation_dataset/
 
 Total image files: 696
 Total mask files: 714
+```
