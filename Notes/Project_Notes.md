@@ -1,5 +1,7 @@
 ## 6/28/2026 
 
+There is a very specific format the dataset has to be in for any and all of the project code to work. I have listed it below. 
+
 ### Creating the Dataset, needs to be in this format:
 
 <img width="512" height="366" alt="image" src="https://github.com/user-attachments/assets/60480a30-1247-4220-86d7-c22070cd1a6d" />
@@ -136,3 +138,9 @@ Total mask files: 714
 * it comes from a inconsistency with the 3d-2d slivering
 * I will try to find the severity of the issue, how to fix it and maybe find an alternative
 * then I will properly reproduce! should be easy
+
+### New workflow:
+
+* I am going to start reformatting code in visual studio code
+* all testing will probably be run on google colab for the processing power and speed of the t4 GPU (thank you google)
+* 
