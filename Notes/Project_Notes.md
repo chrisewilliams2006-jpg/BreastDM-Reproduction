@@ -143,4 +143,155 @@ Total mask files: 714
 
 * I am going to start reformatting code in visual studio code
 * all testing will probably be run on google colab for the processing power and speed of the t4 GPU (thank you google)
-* 
+
+## 7/24/2026
+
+#### Confirmed `img9Se` leakage
+
+The released raw imagese image directories repeat six malignant training patients in the test folder:
+The official repository was downloaded and extracted to:
+
+- `BreaDM-Ma-1802`
+- `BreaDM-Ma-1803`
+- `BreaDM-Ma-1804`
+- `BreaDM-Ma-1806`
+- `BreaDM-Ma-1807`
+- `BreaDM-Ma-1808`
+
+These patients contribute 43 test images, all byte-identical to their training copies. The released GLCM and LBP feature folders do not contain these six extra test patients.
+
+### Created a repeatable dataset audit
+
+Run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\audit_breastdm.ps1
+```text
+reference/extracted/Breast-cancer-dataset-master
+```
+
+The script checks:
+I also created scripts that audit the dataset and generate training manifests:
+
+- Total files and file extensions
+- Patient and sequence counts
+- Image/mask pairing
+- Missing or orphan labels
+- Patient overlap across train, validation, and test
+- Classification experiment-group composition
+
+It writes the machine-readable report to `outputs/dataset_audit.json`.
+
+The human-readable interpretation is recorded in `AUDIT_FINDINGS.md`.
+
+### Created immutable training manifests
+
+Run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build_manifests.ps1
+```text
+scripts/audit_breastdm.ps1
+scripts/build_manifests.ps1
+```
+
+This generates CSV manifests under `outputs/manifests` without moving, renaming, or modifying source images.
+
+| Manifest | Rows | Train/test patient overlap |
+|---|---:|---:|
+| `seg2d_released.csv` | 29,512 | 3 patients |
+| `seg2d_corrected.csv` | 29,274 | 0 |
+| `seg3d.csv` | 696 | 0 |
+| `classification_img17Se_released.csv` | 1,722 | 0 |
+| `classification_img17Se_corrected.csv` | 1,722 | 0 |
+| `classification_img9Se_released.csv` | 1,765 | 6 patients |
+| `classification_img9Se_corrected.csv` | 1,722 | 0 |
+
+Each manifest records the supplied split, patient ID, sequence or class, and paths relative to `data/BreastDM_clean`.
+
+### Inspected the authors' U-Net implementation
+
+The authors' U-Net folder pins:
+
+- Python-era dependencies centered on PyTorch 1.10.0
+- torchvision 0.11.1
+- NumPy 1.21.3
+- Pillow
+
+The classification project separately pins PyTorch 1.8.0 and torchvision 0.9.0. These legacy dependencies should be isolated from any modern improvement environment.
+
+The U-Net training script reports the following intended defaults:
+## Dataset findings
+
+- One tumor class plus background
+- Batch size 64
+- 100 epochs
+- Initial learning rate 0.01
+- SGD momentum 0.9
+- Weight decay `1e-4`
+- Input normalization mean `(0.709, 0.381, 0.224)`
+- Input normalization standard deviation `(0.127, 0.079, 0.043)`
+The dataset contains three main sections:
+
+The repository includes saved U-Net training logs showing Dice and IoU values across epochs. However, its loader is still based on a DRIVE-dataset template: it expects `all_images`, `all_manual`, and BMP masks instead of the released BreastDM patient/sequence hierarchy. A BreastDM-specific loader is therefore required before training can be reproduced correctly.
+```text
+cls/      Classification data
+seg/      Prepared 2D segmentation data
+seg3D/    Prepared 3D segmentation data
+```
+
+## Reproduction policy
+The clean extraction contains 70,809 files. The 3D segmentation data contains 696 image volumes, which matches 232 patients with three MRI sequences each.
+
+Every experiment will be reported under one of two tracks:
+Several problems were discovered in the released splits:
+
+### Faithful track
+- The 2D segmentation data repeats three patients across training and testing. This produces 238 identical image/mask pairs in both splits.
+- The `img9Se` classification data repeats six malignant patients across training and testing, producing 43 identical images.
+- The 3D training-label folder contains 18 extra masks belonging to six test patients. The 3D image splits themselves are patient-disjoint.
+- The `img17Se` classification split is patient-disjoint and contains all 232 patients.
+
+Use the authors' released folders and settings as closely as possible. This track determines whether the published values can be reproduced. Results must clearly disclose the confirmed duplicates and orphan labels.
+Because of these issues, experiments will use two tracks:
+
+### Corrected track
+1. **Released track:** Uses the authors’ supplied splits to determine whether the published results can be reproduced.
+2. **Corrected track:** Removes duplicated test patients and ignores orphan labels to produce scientifically valid results.
+
+Use patient-disjoint manifests, ignore orphan labels, and evaluate without duplicate test patients. This track provides the scientifically valid comparison for future improvements.
+## Generated manifests
+
+Faithful and corrected values must never be combined in the same results column without a clear label.
+CSV manifests were created under `outputs/manifests` so training code can load the data without moving or renaming files.
+
+## Current workspace
+Important manifests include:
+
+```text
+ok-s/
+├── data/
+│   └── BreastDM_clean/             # Verified clean dataset copy
+├── outputs/
+│   ├── dataset_audit.json          # Machine-readable audit
+│   └── manifests/                  # Released and corrected CSV manifests
+├── reference/
+│   ├── Breast-cancer-dataset-master.zip
+│   └── extracted/
+│       └── Breast-cancer-dataset-master/
+├── scripts/
+│   ├── audit_breastdm.ps1
+│   └── build_manifests.ps1
+├── AUDIT_FINDINGS.md
+├── README.md
+└── .gitignore
+seg2d_released.csv
+seg2d_corrected.csv
+seg3d.csv
+classification_img17Se_corrected.csv
+classification_img9Se_released.csv
+classification_img9Se_corrected.csv
+```
+
+The `data/`, `reference/`, and generated `outputs/` contents are excluded from version control because they are large or reproducible artifacts.
+The corrected manifests have no patient overlap between training and testing.
