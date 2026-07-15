@@ -295,3 +295,28 @@ classification_img9Se_corrected.csv
 
 The `data/`, `reference/`, and generated `outputs/` contents are excluded from version control because they are large or reproducible artifacts.
 The corrected manifests have no patient overlap between training and testing.
+
+## 7/14/2026
+
+### Reviewing and making sure everthing is in order 
+
+* discovered duplicated patients across some training and testing splits
+* created both original and corrected patient-disjoint manifests.
+
+* ### Recreated Segmentation Dataset
+
+* There were many issues with the segmentation dataset, many have already been described in earlier days.
+* This time it should really be fixed, the segmentation dataset will now be placed in the data folder of the breast_dm project folder.
+
+* Today was alot of organizing and finalizing the data
+
+### One of the most important additions was the smoke testing
+
+* the smoke test that I ran basically checked to see if each patient had a mask,
+* I can fix the issue, but I won't know if its fixed or not, this is the major problem with the engineering component of the project
+* I THINK that everything is in order now
+* 
+### The Dataset now exists as a zip file in my folder 
+<img width="1028" height="634" alt="image" src="https://github.com/user-attachments/assets/e4c98ae4-16e5-47aa-b410-afa5f349ad93" />
+(taken from my google drive)
+  
