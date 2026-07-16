@@ -315,3 +315,61 @@ from google.colab import drive
 
 ---
 
+## BreastDM Dataset Splitter — Improved Version
+### Overview
+
+* This notebook creates a clean, reproducible dataset for training a 2D breast tumor segmentation model. It improves the original splitting process by correctly handling individual MRI slices, removing duplicate samples, preventing patient leakage, and ensuring every image has a matching tumor mask.
+
+### What the Notebook Does
+1. Mounts Google Drive and reads BreastDMDS.zip.
+2. Extracts only the 2D seg dataset, excluding seg3D.
+3. Finds each JPG image and its corresponding PNG mask.
+4. Handles slices using the complete combination of:
+* Patient ID
+* MRI sequence
+* Slice name
+
+* Removes identical samples duplicated across the authors’ original splits.
+* Stops with an error if duplicate filenames contain conflicting data.
+* Creates a new patient-level split:
+1. 70% training
+2. 15% validation
+3. 15% testing
+
+* Maintains the benign/malignant distribution in each split.
+* Verifies that no patient appears in multiple splits.
+* Copies the results into simple images and masks folders.
+* Creates split_manifest.csv to document every sample.
+* Saves the completed dataset as a new ZIP file in Google Drive.
+* Slice-Handling Improvement
+* The earlier slicing approach could incorrectly match, overwrite, or lose slices with similar names. This version identifies every sample using:
+1. patient_id
+2. sequence
+3. slice_name
+---
+### It also gives every output file a unique name:
+* patient__sequence__slice.jpg
+* patient__sequence__slice.png
+This ensures that slices from different patients or MRI sequences cannot overwrite one another.
+### Output Structure
+```
+segmentation_DS_7_14_2026/
+├── train/
+│   ├── images/
+│   └── masks/
+├── val/
+│   ├── images/
+│   └── masks/
+├── test/
+│   ├── images/
+│   └── masks/
+└── split_manifest.csv
+```
+### Reproducibility
+* The notebook uses a fixed random seed:
+```
+SEED = 42
+```
+* Running it again with the same dataset and seed will produce the same patient assignments.
+* This is for continuity so that others can reproduce my work easier
+
