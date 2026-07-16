@@ -319,4 +319,18 @@ The corrected manifests have no patient overlap between training and testing.
 ### The Dataset now exists as a zip file in my folder 
 <img width="1028" height="634" alt="image" src="https://github.com/user-attachments/assets/e4c98ae4-16e5-47aa-b410-afa5f349ad93" />
 (taken from my google drive)
-  
+--- 
+## 7/16/2026
+### Adding to the Data preproccessing README
+
+* This is something I really need to stay on top of.
+* I created a new split function because there were so many issues with the first one
+1. there was a descrepency within the numbers
+* the issue with this is obviously that I might garter innacurate results from this
+2. The slicing that converted 3d to 2d had major issues
+*  This is an issue because the masks wouldnt line up with the images, so we wouldn't even beable to run the segmentation
+All of this is communicated in the readme
+* new split function added (better and working)
+
+* Now for UNET
+
