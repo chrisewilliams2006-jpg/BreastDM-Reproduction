@@ -319,19 +319,21 @@ from google.colab import drive
 ### Overview
 
 * This notebook creates a clean, reproducible dataset for training a 2D breast tumor segmentation model. It improves the original splitting process by correctly handling individual MRI slices, removing duplicate samples, preventing patient leakage, and ensuring every image has a matching tumor mask.
-
+---
 ### What the Notebook Does
 1. Mounts Google Drive and reads BreastDMDS.zip.
 2. Extracts only the 2D seg dataset, excluding seg3D.
 3. Finds each JPG image and its corresponding PNG mask.
-4. Handles slices using the complete combination of:
+---
+### Handles slices using the complete combination of:
 * Patient ID
 * MRI sequence
 * Slice name
 
 * Removes identical samples duplicated across the authors’ original splits.
 * Stops with an error if duplicate filenames contain conflicting data.
-* Creates a new patient-level split:
+---
+### Creates a new patient-level split:
 1. 70% training
 2. 15% validation
 3. 15% testing
