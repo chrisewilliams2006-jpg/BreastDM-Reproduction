@@ -374,4 +374,9 @@ SEED = 42
 ```
 * Running it again with the same dataset and seed will produce the same patient assignments.
 * This is for continuity so that others can reproduce my work easier
-
+## One very important thing:
+The file created is called:
+```
+segmentation_DS_7_14_2026.zip
+```
+this is necessary for the dataloader code to work 
