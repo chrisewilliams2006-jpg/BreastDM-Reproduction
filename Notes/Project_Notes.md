@@ -333,4 +333,80 @@ All of this is communicated in the readme
 * new split function added (better and working)
 
 * Now for UNET
+---
+## 7/17/2026
 
+### Created Unet
+* uses a simple 2D U-Net to identify and segment breast tumors in DCE-MRI slices. The model receives an MRI image and produces a binary mask showing the predicted tumor region.
+
+### Model Architecture
+The U-Net contains three main sections:
+1. Encoder: Uses convolution blocks and pooling to learn image features while reducing spatial resolution.
+2. Bottleneck: Learns the deepest representation of the image.
+3. Decoder: Enlarges the feature maps and reconstructs the tumor mask.
+Skip connections transfer detailed information from the encoder to the decoder. Each stage uses a reusable DoubleConv block containing two convolution layers, batch normalization, and ReLU activation.
+### Input and Output
+The DataLoader prepares grayscale images and masks at 256 × 256 resolution.
+Input:  [batch_size, 1, 256, 256]
+Output: [batch_size, 1, 256, 256]
+Each output pixel represents the model’s confidence that the corresponding image pixel belongs to a tumor.
+Training
+The model was trained using:
+Epochs: 10
+Batch size: 8
+Optimizer: Adam
+Learning rate: 0.0001
+Loss: Binary Cross-Entropy + Dice Loss
+Binary cross-entropy evaluates individual pixel predictions, while Dice loss encourages overlap between the predicted and correct tumor masks.
+Initial Results
+The best validation performance occurred during epoch 3:
+Training Dice:   0.8549
+Validation Dice: 0.5846
+Validation loss: 0.4277
+The training Dice later increased above 0.91, but validation performance decreased. This indicates overfitting: the model continued learning the training images without improving on unseen patients.
+The best checkpoint was automatically saved as:
+/content/drive/MyDrive/BreastDM_Project/models/best_unet.pth
+Comparison with the Paper
+The BreastDM manuscript reported the following U-Net results:
+Dice: 73.7%
+mIoU: 80.3%
+PPV:  83.6%
+The current model’s validation Dice of 58.46% is a useful first baseline, but it cannot be compared perfectly with the paper because the dataset split, preprocessing, training duration, and evaluation procedure are different.
+Next Steps
+The next step is to load the best checkpoint, evaluate it once on the untouched test dataset, and display predicted masks beside the correct masks. Future improvements could include data augmentation, early stopping, learning-rate scheduling, and additional regularization.
+### BreastDM specific data loader created 
+* I wanted to create a better dataloader that i could use for both Unet and Unext
+It:
+* Reads your existing train, val, and test directories
+* Pairs .jpg images with .png masks by filename stem
+* Detects missing or duplicate pairs
+* Returns three-channel C×H×W images for UNeXt
+* Returns binary 1×H×W masks
+* Supports Albumentations transforms
+* Creates deterministic PyTorch loaders using seed 42
+* Preserves the original UNeXt return format: image, mask, metadata
+### Usage:
+from dataloader import create_breastdm_loaders
+```
+loaders = create_breastdm_loaders(
+    dataset_root="/content/segmentation_DS_7_14_2026",
+    batch_size=8,
+    num_workers=2,
+    seed=42,
+)
+
+train_loader = loaders["train"]
+val_loader = loaders["val"]
+test_loader = loaders["test"]
+
+images, masks, metadata = next(iter(train_loader))
+
+print(images.shape)  # [8, 3, H, W]
+print(masks.shape)   # [8, 1, H, W]
+```
+For binary UNeXt, instantiate the model with one output class:
+```
+model = UNext(num_classes=1, input_channels=3)
+```
+
+---
