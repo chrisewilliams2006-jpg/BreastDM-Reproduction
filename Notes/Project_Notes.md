@@ -430,3 +430,66 @@ The google colab inlcudes:
 * Prediction visualization
 * Explicit separation of validation and test evaluation
 * Explanatory comments and readable variable names
+
+## Dataset
+
+- Used the processed BreastDM 2D segmentation dataset.
+- Created a reproducible `70/15/15` patient-level split.
+- Removed duplicate samples and prevented patient leakage.
+- Final dataset contains 29,274 image–mask pairs:
+
+| Split | Patients | Samples |
+|---|---:|---:|
+| Train | 162 | 20,417 |
+| Validation | 35 | 4,573 |
+| Test | 35 | 4,284 |
+
+## Data Pipeline
+
+- Created a PyTorch dataset class.
+- Paired JPG images with PNG masks.
+- Converted images to `[3, 256, 256]`.
+- Converted binary masks to `[1, 256, 256]`.
+- Added resizing, flipping, and rotation augmentation.
+- Created train, validation, and test loaders.
+- Verified image/mask counts, patient separation, and batch shapes.
+
+## UNeXt
+
+- Recreated the complete UNeXt architecture in Colab.
+- Used three convolutional encoder stages and two shifted-MLP stages.
+- Configured one output channel for binary tumor segmentation.
+- Verified the forward pass:
+
+```text
+Input:  [B, 3, 256, 256]
+Output: [B, 1, 256, 256]
+Mask:   [B, 1, 256, 256]
+```
+
+## Training Setup
+
+- Defined BCE–Dice loss.
+- Defined Dice and IoU metrics.
+- Verified one backward optimization step.
+- Tested overfitting on 16 tumor-containing samples.
+- Prepared full training with:
+
+```text
+Optimizer: Adam
+Learning rate: 1e-4
+Batch size: 8
+Maximum epochs: 100
+Early stopping: 15 epochs
+Checkpoint selection: Best validation Dice
+```
+
+## Saving and Evaluation
+
+- Best model saves to Google Drive.
+- Recovery checkpoint allows training to resume after Colab disconnects.
+- Training history and curves are saved.
+- After training, load the best validation checkpoint.
+- Evaluate the untouched test set once.
+- Report final test Dice and IoU.
+- Visually inspect predicted tumor masks.
