@@ -538,34 +538,3 @@ The reproduced result uses a new leak-free patient-level split, `256 × 256` inp
 ### Quick pic of the epoch training data 
 its a little boring becuase it includes all the epochs and it didn't actually train that much after epoch 3
 <img width="2654" height="1176" alt="image" src="https://github.com/user-attachments/assets/b8223b81-407e-4c38-89eb-f16bde34c6ab" />
-
-### checking 
-Epoch 017 | lr 2.90e-04 | train L 0.2105 D 0.7954 | val L 0.4226 D 0.5851 I 0.4901 | best 0.6229 | 1.5 min
-Epoch 018 | lr 2.88e-04 | train L 0.2081 D 0.7977 | val L 0.4123 D 0.5950 I 0.4969 | best 0.6229 | 1.5 min
-Epoch 019 | lr 2.86e-04 | train L 0.2037 D 0.8020 | val L 0.3994 D 0.6086 I 0.5121 | best 0.6229 | 1.5 min
-Epoch 020 | lr 2.84e-04 | train L 0.2023 D 0.8033 | val L 0.3843 D 0.6238 I 0.5201 | best 0.6238 | 1.6 min
-Epoch 021 | lr 2.82e-04 | train L 0.1970 D 0.8085 | val L 0.4157 D 0.5925 I 0.4987 | best 0.6238 | 1.5 min
-Epoch 022 | lr 2.80e-04 | train L 0.1959 D 0.8095 | val L 0.4027 D 0.6051 I 0.5082 | best 0.6238 | 1.5 min
-Epoch 023 | lr 2.77e-04 | train L 0.1940 D 0.8114 | val L 0.3806 D 0.6273 I 0.5259 | best 0.6273 | 1.5 min
-Epoch 024 | lr 2.74e-04 | train L 0.1915 D 0.8138 | val L 0.4000 D 0.6076 I 0.5105 | best 0.6273 | 1.6 min
-Epoch 025 | lr 2.71e-04 | train L 0.1898 D 0.8155 | val L 0.4381 D 0.5696 I 0.4823 | best 0.6273 | 1.6 min
-Epoch 026 | lr 2.68e-04 | train L 0.1873 D 0.8178 | val L 0.4063 D 0.6019 I 0.5071 | best 0.6273 | 1.5 min
-Epoch 027 | lr 2.65e-04 | train L 0.1868 D 0.8184 | val L 0.4125 D 0.5954 I 0.5034 | best 0.6273 | 1.6 min
-Epoch 028 | lr 2.62e-04 | train L 0.1846 D 0.8205 | val L 0.4026 D 0.6053 I 0.5111 | best 0.6273 | 1.5 min
-Epoch 029 | lr 2.59e-04 | train L 0.1839 D 0.8212 | val L 0.4347 D 0.5735 I 0.4819 | best 0.6273 | 1.5 min
-Epoch 030 | lr 2.55e-04 | train L 0.1817 D 0.8232 | val L 0.4092 D 0.5990 I 0.5046 | best 0.6273 | 1.5 min
-Epoch 031 | lr 2.52e-04 | train L 0.1799 D 0.8251 | val L 0.4588 D 0.5500 I 0.4627 | best 0.6273 | 1.5 min
-Epoch 032 | lr 2.48e-04 | train L 0.1779 D 0.8270 | val L 0.4074 D 0.6009 I 0.5026 | best 0.6273 | 1.5 min
-Epoch 033 | lr 2.44e-04 | train L 0.1760 D 0.8290 | val L 0.4327 D 0.5754 I 0.4866 | best 0.6273 | 1.5 min
-Epoch 034 | lr 2.40e-04 | train L 0.1745 D 0.8303 | val L 0.4139 D 0.5951 I 0.5062 | best 0.6273 | 1.6 min
-Epoch 035 | lr 2.36e-04 | train L 0.1742 D 0.8306 | val L 0.4190 D 0.5893 I 0.4938 | best 0.6273 | 1.6 min
-Epoch 036 | lr 2.32e-04 | train L 0.1733 D 0.8315 | val L 0.4144 D 0.5933 I 0.5022 | best 0.6273 | 1.6 min
-Epoch 037 | lr 2.28e-04 | train L 0.1728 D 0.8319 | val L 0.4527 D 0.5560 I 0.4744 | best 0.6273 | 1.5 min
-Epoch 038 | lr 2.24e-04 | train L 0.1692 D 0.8355 | val L 0.3945 D 0.6139 I 0.5160 | best 0.6273 | 1.6 min
-Epoch 039 | lr 2.19e-04 | train L 0.1680 D 0.8367 | val L 0.4120 D 0.5963 I 0.5025 | best 0.6273 | 1.6 min
-Epoch 040 | lr 2.15e-04 | train L 0.1661 D 0.8385 | val L 0.4375 D 0.5713 I 0.4832 | best 0.6273 | 1.5 min
-Epoch 041 | lr 2.11e-04 | train L 0.1667 D 0.8380 | val L 0.4011 D 0.6066 I 0.5143 | best 0.6273 | 1.5 min
-Epoch 042 | lr 2.06e-04 | train L 0.1654 D 0.8392 | val L 0.4105 D 0.5975 I 0.5083 | best 0.6273 | 1.5 min
-Epoch 043 | lr 2.01e-04 | train L 0.1644 D 0.8402 | val L 0.4420 D 0.5658 I 0.4791 | best 0.6273 | 1.5 min
-Early stopping.
-Training complete. Best validation Dice: 0.6273407456280756
