@@ -534,3 +534,8 @@ Training stopped early after 18 epochs. The checkpoint from epoch 3 was selected
 | Difference | −11.26 percentage points |
 
 The reproduced result uses a new leak-free patient-level split, `256 × 256` inputs, and foreground-only Dice and IoU. The authors used different data partitions and experimental settings, so the results are not directly equivalent.
+
+### Quick pic of the epoch training data 
+its a little boring becuase it includes all the epochs and it didn't actually train that much after epoch 3
+<img width="2654" height="1176" alt="image" src="https://github.com/user-attachments/assets/b8223b81-407e-4c38-89eb-f16bde34c6ab" />
+
