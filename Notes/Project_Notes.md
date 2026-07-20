@@ -493,3 +493,44 @@ Checkpoint selection: Best validation Dice
 - Evaluate the untouched test set once.
 - Report final test Dice and IoU.
 - Visually inspect predicted tumor masks.
+
+## 7/20/2026
+
+### ran a succesful UNEXT model 
+---
+## UNeXt Results
+
+Training stopped early after 18 epochs. The checkpoint from epoch 3 was selected because it achieved the highest validation Dice score.
+
+| Dataset | Loss | Dice | IoU |
+|---|---:|---:|---:|
+| Training at selected epoch | 0.2885 | 72.21% | 60.72% |
+| Validation at selected epoch | 0.4641 | 54.55% | 44.13% |
+| Test | 0.4232 | **58.84%** | **47.59%** |
+
+### Experiment Configuration
+
+| Setting | Value |
+|---|---:|
+| Training samples | 20,417 |
+| Validation samples | 4,573 |
+| Test samples | 4,284 |
+| Input size | 256 × 256 |
+| Batch size | 8 |
+| Initial learning rate | 0.0001 |
+| Maximum epochs | 100 |
+| Stopping epoch | 18 |
+| Best checkpoint epoch | 3 |
+| Trainable parameters | 253,561 |
+| Mixed precision | Enabled |
+| Device | CUDA GPU |
+
+### Comparison With the Paper
+
+| Model | Dice |
+|---|---:|
+| Authors’ UNeXt result | 70.10% |
+| Reproduced UNeXt result | **58.84%** |
+| Difference | −11.26 percentage points |
+
+The reproduced result uses a new leak-free patient-level split, `256 × 256` inputs, and foreground-only Dice and IoU. The authors used different data partitions and experimental settings, so the results are not directly equivalent.
