@@ -673,3 +673,33 @@ The released UNeXt code partially answers this question, but it uses a batch-dep
 
 This does not prove that the published results are incorrect. It means that exact reproduction requires matching the released evaluation code. A rigorous reproduction should additionally report per-image, global, and per-patient Dice scores while clearly documenting every evaluation and aggregation choice.
 
+## 7/22/2026
+
+### Reproing  the LG-CAFM model 
+
+There's a couple noteworthy things first: 
+
+* we need a patirent level data manifest
+* build a table with fields such as:
+```
+patient_id
+image_path
+label
+sequence_type
+time_point
+roi_or_full_image
+split
+```
+* The split must be patient-level. If slices from one patient appear in both training and testing, the model could recognize patient-specific anatomy or acquisition characteristics, producing artificially high results.
+The manifest should also verify
+* 232 unique patients
+* 147 malignany patients
+* 85 benign patients
+* no patient overlap between splits
+* no missing or duplicate images
+* and consistent label encoding
+
+The final thing to note before i start is that i really have to keep everything the same as the authors as on the first run. this was impossible for UNEXT and UNET segmentation because the authors simply did not label. 
+
+For my repro of LG-CAFN, I need to make sure I get to where the scientists get before i try to improve upon their work. This way I can see my growth! 
+
