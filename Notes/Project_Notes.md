@@ -539,111 +539,137 @@ The reproduced result uses a new leak-free patient-level split, `256 × 256` inp
 its a little boring becuase it includes all the epochs and it didn't actually train that much after epoch 3
 <img width="2654" height="1176" alt="image" src="https://github.com/user-attachments/assets/b8223b81-407e-4c38-89eb-f16bde34c6ab" />
 
-
 ---
-## Major issue with the dataset ---------------------------------------------------------------------------------------------------------------
+## 7/21/2026
+
+### Major error discovered in the Dice Score aggregation
+
 ## Dice Score Aggregation Issue
 
-The BreastDM manuscript defines the Dice Similarity Coefficient (DSC) as:
+The BreastDM manuscript uses the Dice Similarity Coefficient to evaluate tumor segmentation. Dice measures the overlap between the predicted tumor mask and the ground-truth mask using true-positive, false-positive, and false-negative pixels.
 
-$$
-\mathrm{DSC}
-=
-\frac{2\mathrm{TP}}
-{2\mathrm{TP}+\mathrm{FP}+\mathrm{FN}}
-$$
+Although the manuscript defines Dice, it does not clearly explain how results from thousands of MRI slices were combined into the final reported score.
 
-where:
+This creates a reproducibility issue because several aggregation methods are possible, and they can produce different results.
 
-- $\mathrm{TP}$ = true-positive pixels
-- $\mathrm{FP}$ = false-positive pixels
-- $\mathrm{FN}$ = false-negative pixels
+### Possible Aggregation Methods
 
-Although this equation is correct, it only defines Dice for one collection of pixels. It does not specify how predictions from multiple MRI slices or patients were combined into the final reported score.
+#### Mean Per-Slice Dice
 
-### Mean Per-Slice Dice
+Dice can be calculated separately for every MRI slice and then averaged across all slices.
 
-Dice may be calculated separately for each of the $N$ test slices and then averaged:
+This method gives every slice equal importance, regardless of tumor size. A slice containing a very small tumor contributes as much to the final result as a slice containing a large tumor.
 
-$$
-\mathrm{DSC}_{\mathrm{slice}}
-=
-\frac{1}{N}
-\sum_{i=1}^{N}
-\frac{2\mathrm{TP}_i}
-{2\mathrm{TP}_i+\mathrm{FP}_i+\mathrm{FN}_i}
-$$
+#### Global Dice
 
-This gives every slice equal weight, regardless of its tumor size.
+True-positive, false-positive, and false-negative pixels can be pooled across the entire test set before calculating one Dice score.
 
-### Global Dice
+This method gives greater influence to slices and patients with larger tumors because they contribute more foreground pixels.
 
-Pixel counts may instead be pooled across all test slices before Dice is calculated:
+#### Mean Per-Patient Dice
 
-$$
-\mathrm{DSC}_{\mathrm{global}}
-=
-\frac{2\sum_{i=1}^{N}\mathrm{TP}_i}
-{2\sum_{i=1}^{N}\mathrm{TP}_i
-+\sum_{i=1}^{N}\mathrm{FP}_i
-+\sum_{i=1}^{N}\mathrm{FN}_i}
-$$
+All slices belonging to one patient can be combined into a three-dimensional volume. Dice is calculated separately for each patient and then averaged across patients.
 
-This gives greater influence to slices containing more tumor pixels.
+This method gives every patient equal influence and may be more clinically meaningful than treating every slice independently.
 
-### Mean Per-Patient Dice
+#### Mean Per-Batch Dice
 
-The slices belonging to each patient may be treated as one 3D volume. Dice is calculated for each of the $P$ patients and then averaged:
+Pixel counts can also be pooled within each evaluation mini-batch. One Dice score is calculated for each batch, and the batch scores are then averaged.
 
-$$
-\mathrm{DSC}_{\mathrm{patient}}
-=
-\frac{1}{P}
-\sum_{p=1}^{P}
-\frac{2\mathrm{TP}_p}
-{2\mathrm{TP}_p+\mathrm{FP}_p+\mathrm{FN}_p}
-$$
+This approach can make the final result depend on:
 
-This gives every patient equal weight.
+- the evaluation batch size;
+- the order of test samples;
+- which images appear together in each batch;
+- and the size of the final incomplete batch.
 
-### Batch-Pooled Dice
+These aggregation methods are not mathematically equivalent and can produce different scores from the same predictions.
 
-The released UNeXt code first calculates a pooled IoU for each evaluation batch and then converts it to Dice:
+### What the Manuscript Does Not Specify
 
-$$
-\mathrm{DSC}_{\mathrm{batch}}
-=
-\frac{2\,\mathrm{IoU}_{\mathrm{batch}}}
-{1+\mathrm{IoU}_{\mathrm{batch}}}
-$$
+The manuscript does not clearly state:
 
-The resulting batch-level values are passed to an `AverageMeter`, weighted by the number of images in each batch.
+- whether Dice was calculated per slice, per patient, or per three-dimensional volume;
+- whether pixel counts were pooled across the complete test set;
+- how individual Dice scores were averaged;
+- whether tumor-free slices were included;
+- how empty prediction and ground-truth masks were handled;
+- whether evaluation batch size affected the result;
+- which probability threshold was used to create binary masks;
+- or whether patient grouping was preserved during evaluation.
 
-Because Dice is nonlinear, the possible aggregation methods are generally not equivalent:
+As a result, the segmentation scores cannot be reproduced exactly from the manuscript alone.
 
-$$
-\frac{1}{N}\sum_{i=1}^{N}\mathrm{DSC}_i
-\neq
-\mathrm{DSC}_{\mathrm{global}}
-\neq
-\frac{1}{B}\sum_{b=1}^{B}\mathrm{DSC}_b
-$$
+### What the Released UNeXt Code Does
 
-where $B$ is the number of evaluation batches.
+The authors’ released UNeXt code partially resolves the ambiguity.
 
-### Empty-Mask Case
+The evaluation process in the released code:
 
-If both the predicted mask and ground-truth mask are empty, the unsmoothed Dice equation becomes:
+1. Applies a sigmoid transformation to the model output.
+2. Converts the output into a binary mask using a threshold of `0.5`.
+3. Pools intersection and union across all images in the current mini-batch.
+4. Calculates one Intersection over Union score for the batch.
+5. Converts the batch Intersection over Union score into a batch Dice score.
+6. Adds that batch-level score to an average that is weighted by the number of images in the batch.
 
-$$
-\mathrm{DSC}
-=
-\frac{2(0)}
-{2(0)+0+0}
-=
-\frac{0}{0}
-$$
+The released UNeXt implementation therefore appears to report a sample-weighted average of batch-pooled Dice scores.
 
-This is undefined unless an explicit empty-mask convention or smoothing term is introduced.
+This result is not necessarily equal to mean per-slice Dice or global test-set Dice. It may also change if the evaluation batch size or batch composition changes.
 
-The released code uses a small smoothing constant, but the manuscript does not clearly state how empty-mask slices contribute to its reported results.
+### Empty-Mask Cases
+
+Some MRI slices may contain no annotated tumor. These slices require an explicit evaluation policy.
+
+Important cases include:
+
+| Ground-truth mask | Predicted mask | Interpretation |
+| --- | --- | --- |
+| Empty | Empty | Correctly predicts that no tumor is present |
+| Empty | Non-empty | Produces a false-positive tumor segmentation |
+| Non-empty | Empty | Completely misses an annotated tumor |
+| Non-empty | Non-empty | Standard overlap evaluation |
+
+When both masks are empty, the standard Dice calculation is undefined unless a smoothing value or explicit scoring rule is used.
+
+Possible policies include:
+
+- assigning a perfect Dice score;
+- excluding the slice from the average;
+- assigning a zero score;
+- or reporting the case separately.
+
+The released UNeXt code uses a small smoothing value, which effectively treats an empty prediction paired with an empty target as perfect overlap. The manuscript does not explain this behavior or state whether tumor-free slices were included.
+
+### Reproduction Plan
+
+To make the reproduction transparent, the following segmentation metrics should be reported:
+
+| Metric | Definition |
+| --- | --- |
+| `per_image_dice` | Calculate Dice separately for each slice and then average across slices. |
+| `global_dice` | Pool pixel counts across the complete test set before calculating Dice. |
+| `per_patient_dice` | Calculate three-dimensional Dice for each patient and then average across patients. |
+| `paper_code_dice` | Reproduce the authors’ batch-based calculation for direct comparison. |
+
+The evaluation should also document:
+
+- patient-level training, validation, and test splits;
+- evaluation batch size;
+- the probability threshold;
+- the empty-mask policy;
+- whether tumor-free slices are included;
+- image preprocessing and resolution;
+- the model checkpoint-selection method;
+- and whether threshold selection uses validation data only.
+
+### Conclusion
+
+The BreastDM manuscript’s Dice evaluation procedure is under-specified.
+
+The Dice definition itself is valid, but the manuscript does not explain how results from many MRI slices and patients were aggregated into the final reported scores.
+
+The released UNeXt code partially answers this question, but it uses a batch-dependent aggregation procedure that is not described in the manuscript.
+
+This does not prove that the published results are incorrect. It means that exact reproduction requires matching the released evaluation code. A rigorous reproduction should additionally report per-image, global, and per-patient Dice scores while clearly documenting every evaluation and aggregation choice.
+
