@@ -725,3 +725,34 @@ The central reproducibility issue is that the BreastDM manuscript and released r
 9. Add a learnable 1×1 convolutional adapter mapping 9 or 17 channels to three channels.
 10. Feed those three learned channels into the ImageNet-pretrained SENet50 and ViT branches.
 11. Aggregate all ROI predictions belonging to a patient by averaging malignant-class probabilities, then calculate patient-level metrics.
+---
+## 7/24/2026
+### Creating the training notebook for the LG-CAFN model
+
+I already created the model in the datasplitter notebook
+I actually didnt mean to do this but I got a little carried away, I would have liked to separate them but having it all together isnt necessarily a bad thing, it just kinda hurts my organization
+It was 22 cells long which was too long to also incorporate the training cells 
+* I should have split it up so that
+1. There were the correct datasplitting cells in one notebook
+2. The smoke tests were in another
+3. and the model definition was in another
+* and even perhaps the transformer
+* and other convolutional model were seperate
+* although I'm not sure how well that would actually work to be honest because maybe splitting them up would take too much time for the computer to race across both notebooks just for one singular model
+* Perhaps this is a technique that I will look into in the future! 
+Also with the github useage limits, that might pose a major problem that I am glad to avoid/
+
+The vast majority of the cells in the datasplitter function are smoke tests and other various tests that make sure that the model will run how it is supposed to
+
+These tests are obviously very important because we want to make sure that eveyrhting is right so that we can get the best results possible and the model preforms to the right standards 
+
+* Its important to note that we will not be sure if the omdel will hit the standrads of the paper becuase of the repoduciblity errors that are rampant in the paper
+
+
+### Imporant things:
+1. I need to make sure that I use googles t4 GPU
+* this is necessary so that the model can run well and I will be able to get results in a reasonable time
+* The model is 82 million parameters so obviously this is a MUST!
+2. I need a way to connect the two notebooks together.
+* There is a way to do this by adding a pre running cell that I guess mounts google drive (obviously needed), but can also bring across the necessary things like the dataloaders and other various functions
+* I think its kinda cool, it makes it kinda like a github with directions, like run this or run being able to run things across multiple .py files \
