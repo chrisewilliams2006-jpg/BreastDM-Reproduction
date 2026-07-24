@@ -756,3 +756,62 @@ These tests are obviously very important because we want to make sure that eveyr
 2. I need a way to connect the two notebooks together.
 * There is a way to do this by adding a pre running cell that I guess mounts google drive (obviously needed), but can also bring across the necessary things like the dataloaders and other various functions
 * I think its kinda cool, it makes it kinda like a github with directions, like run this or run being able to run things across multiple .py files \
+
+### Completed LG-CAFN-R 
+
+First things first, my -R model keeps the same conventions but still is forced to take some liberties because of ambinguity in the paper
+
+### Breif of the model:
+
+* The notebook trains two binary breast-tumor classifiers called LG-CAFN-R9 and LG-CAFN-R17.
+
+1. LG-CAFN-R9 uses one pre-contrast and eight post-contrast MRI channels.
+2. LG-CAFN-R17 uses those nine channels plus eight subtraction channels.
+
+* The data loader reads each variable-sized H × W × 9 or H × W × 17 tumor ROI directly from BreaDM_cleaned.zip.
+
+* It preserves the canonical patient-level allocation of:
+1. 166 training patients
+2. 19 validation patients
+3. and 47 testing patients.
+
+* Every ROI is resized to 256×256 and subsequently cropped to 224×224 (prescribed in the paper).
+* Training samples receive
+1. synchronized random crops,
+2. horizontal flips,
+3.  vertical flips
+* This is so that spatial alignment is maintained across all temporal channels.
+
+* Validation and testing use deterministic center crops instead of random augmentation.
+* Pixel values are scaled to [0,1] and normalized using channel statistics calculated exclusively from the training partition.
+* A learned 1×1 convolution maps all nine or 17 MRI channels into the three channels required by the ImageNet-pretrained networks.
+* The resulting model combines a local SE-ResNet50 branch with a global ViT-Base/16 branch restricted to seven Transformer blocks.
+* Four feature-coupling stages use bidirectional multihead cross-attention to exchange information between CNN feature maps and Transformer tokens.
+* The final classifier concatenates the pooled CNN representation with the ViT class token and produces benign and malignant logits.
+
+* Training uses:
+1. cross-entropy loss
+2. SGD
+3. an initial learning rate of 0.01
+4. momentum of 0.9, weight decay of 0.01
+5. and a maximum of 100 epochs
+   
+* The notebook determines a safe physical GPU batch size and uses gradient accumulation to approximate an effective batch size of 32.
+* It selects the checkpoint with the highest validation patient-level ROC AUC and evaluates patients by averaging the malignant probabilities of their associated ROIs.
+  
+### Differences from the paper 
+* This implementation differs from the authors’ work because their manuscript and repository do not disclose how the released nine- and 17-channel arrays were converted into the three-channel inputs expected by
+1. their data loader
+2. SENet50
+3. ViT.
+
+* Additional reconstruction decisions include
+1. learned temporal adapter
+2. training-derived normalization
+3. deterministic evaluation cropping
+4. an inferred ViT-7 configuration
+5. reconstructed cross-attention units
+6. explicit patient-level aggregation
+7. and removal of the six erroneous img9Se test assignments,
+
+So the method is correctly identified as LG-CAFN-R rather than an exact reproduction.
