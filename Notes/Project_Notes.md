@@ -815,9 +815,10 @@ First things first, my -R model keeps the same conventions but still is forced t
 7. and removal of the six erroneous img9Se test assignments,
 
 So the method is correctly identified as LG-CAFN-R rather than an exact reproduction.
+
 --- 
 ### LG-CAFN Repro (LG-CAFN-R) 
-
+---
 LG-CAFN-R17 achieved a patient-level test accuracy of 63.83% and an AUC of 0.7627. At the default 0.5 threshold, it classified all 47 test patients as malignant. Its 63.83% accuracy therefore equals the malignant-patient prevalence of 30 out of 47 rather than demonstrating effective binary classification. The test AUC nevertheless indicates that the model learned some ability to rank malignant patients above benign patients. Its best validation AUC of 0.9405 did not generalize, falling by approximately 0.178 on the test set. Training accuracy reached approximately 96%, suggesting substantial overfitting to the 166-patient training partition. The authors reported accuracies of 88.20% and 83.93%, with corresponding AUC values of 0.9154 and 0.8826. LG-CAFN-R17 therefore performed considerably worse than both reported LG-CAFN experiments on the held-out test set. These values are not strictly equivalent because LG-CAFN-R17 uses reconstructed channel conversion, preprocessing, cross-attention, and patient aggregation procedures that were not fully documented by the authors.
 
 | Method | Evaluation set | Accuracy | ROC AUC | Sensitivity | Specificity | Result summary |
