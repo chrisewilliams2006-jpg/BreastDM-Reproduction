@@ -831,13 +831,16 @@ LG-CAFN-R17 achieved a patient-level test accuracy of 63.83% and an AUC of 0.762
 
 ### Improved LG-CAFN-R
 The original BreastDM repository provided the LG-CAFN concept and training code but omitted the crucial conversion between the released 9/17-channel MRI arrays and the three-channel model inputs. This project addressed that gap by establishing a leakage-free patient split, removing 43 erroneous test files, implementing a documented temporal-channel adapter, and adding reproducible patient-level evaluation. The initial reconstructions achieved AUC values of 0.7510 for R9 and 0.7627 for R17, while class weighting and differential fine-tuning improved them to 0.8059 and 0.8176, respectively. The improved R17 model also raised accuracy from 63.83% to 76.60% and corrected the baseline model’s tendency to classify every patient as malignant. Further gains may come from repeated multi-seed experiments, stronger regularization, probability calibration, cross-validation, alternative temporal fusion methods, and cautious hyperparameter optimization performed exclusively with training and validation data.
-	method	experiment	threshold	accuracy	balanced_accuracy	sensitivity	specificity	auc
-0	Original LG-CAFN	Paper Group 1	paper-reported	0.882000	NaN	NaN	NaN	0.915400
-1	Original LG-CAFN	Paper Group 2	paper-reported	0.839300	NaN	NaN	NaN	0.882600
-2	LG-CAFN-R baseline	LG_CAFN_R9	0.5	0.638298	0.652941	0.600000	0.705882	0.750980
-3	LG-CAFN-R baseline	LG_CAFN_R17	0.5	0.638298	0.500000	1.000000	0.000000	0.762745
-4	LG-CAFN-R+	LG_CAFN_R9_PLUS	0.5	0.744681	0.787255	0.633333	0.941176	0.805882
-5	LG-CAFN-R+	LG_CAFN_R9_PLUS	validation Youden J	0.723404	0.732353	0.700000	0.764706	0.805882
-6	LG-CAFN-R+	LG_CAFN_R17_PLUS	0.5	0.765957	0.778431	0.733333	0.823529	0.817647
-7	LG-CAFN-R+	LG_CAFN_R17_PLUS	validation Youden J	0.765957	0.714706	0.900000	0.529412	0.817647
+## LG-CAFN Performance Comparison
+
+| Index | Method | Experiment | Threshold | Accuracy | Balanced Accuracy | Sensitivity | Specificity | AUC |
+|---:|---|---|---|---:|---:|---:|---:|---:|
+| 0 | Original LG-CAFN | Paper Group 1 | Paper-reported | 0.882000 | NaN | NaN | NaN | 0.915400 |
+| 1 | Original LG-CAFN | Paper Group 2 | Paper-reported | 0.839300 | NaN | NaN | NaN | 0.882600 |
+| 2 | LG-CAFN-R baseline | LG_CAFN_R9 | 0.5 | 0.638298 | 0.652941 | 0.600000 | 0.705882 | 0.750980 |
+| 3 | LG-CAFN-R baseline | LG_CAFN_R17 | 0.5 | 0.638298 | 0.500000 | 1.000000 | 0.000000 | 0.762745 |
+| 4 | LG-CAFN-R+ | LG_CAFN_R9_PLUS | 0.5 | 0.744681 | 0.787255 | 0.633333 | 0.941176 | 0.805882 |
+| 5 | LG-CAFN-R+ | LG_CAFN_R9_PLUS | Validation Youden J | 0.723404 | 0.732353 | 0.700000 | 0.764706 | 0.805882 |
+| 6 | LG-CAFN-R+ | LG_CAFN_R17_PLUS | 0.5 | 0.765957 | 0.778431 | 0.733333 | 0.823529 | 0.817647 |
+| 7 | LG-CAFN-R+ | LG_CAFN_R17_PLUS | Validation Youden J | 0.765957 | 0.714706 | 0.900000 | 0.529412 | 0.817647 |
 
