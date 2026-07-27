@@ -1,3 +1,38 @@
+## These are the experiments for the ML models that are outlined in the paper
+---
+The models are:
+---
+### 2d Segmentation methods 
+1. FCN Model
+2. UNET
+3. DeepLabV3
+4. PSPNet
+5. UNeXt
+---
+### 3d Segmentation methods
+1. 3d Unet
+2. 3d Vnet
+3. 3d-DenseSeg
+---
+### 2d Classification methods
+1. LBP
+2. GLCM
+3. VGG
+4. ResNet
+5. DenseNet
+6. SENet
+7. Vision Transformer
+8. Swin Transformer
+9. Proposed Local-Global Cross Attention Fusion Network (Important)
+---
+### 3D Classification methods 
+1. 3DResNet and 3DResNeXt
+2. 3DShuffleNet and 3dShuffleNetv2
+3. 3DMobileNet and 3dMobileNetv2
+4. 
+
+
+
 ## UNEXT info
 ---
 # BreastDM UNeXt Segmentation Reproduction
