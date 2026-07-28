@@ -1,0 +1,191 @@
+## Full results (not abbreviated)
+Compared with R9+, R17+ correctly detects three additional malignant patients but incorrectly labels two additional benign patients as malignant. Its slightly lower balanced accuracy reflects this trade-off, while its higher AUC indicates the best threshold-independent ranking.
+
+### Improvement Over Each Reconstruction Baseline
+
+| Comparison at threshold 0.5 | Accuracy change | Balanced-accuracy change | Sensitivity change | Specificity change | AUC change |
+
+The validation-selected threshold changes the operating point but not AUC, because AUC evaluates ranking across thresholds. For R17+, the Youden threshold may be useful when false negatives are considered substantially more costly, but the fixed threshold generalized better as a balanced default.
+
+### Exact Validation-Selected Thresholds
+
+| Experiment | Validation-selected threshold | Validation sensitivity | Validation specificity | Validation Youden J |
+|---|---:|---:|---:|---:|
+| R9+ | 0.3200 | 91.67% | 100.00% | 0.9167 |
+| R17+ | 0.1204 | 100.00% | 85.71% | 0.8571 |
+
+Both selected thresholds are below `0.5`, especially for R17+. This explains the increase in test sensitivity and decrease in specificity. The validation set contains only seven benign and 12 malignant patients, so a threshold can appear highly effective after being selected from a very small number of cases and then generalize less favorably.
+
+## Validation-to-Test Generalization
+
+| Experiment | Validation AUC | Test AUC | AUC decrease | Validation accuracy at 0.5 | Test accuracy at 0.5 |
+|---|---:|---:|---:|---:|---:|
+| R9 baseline | 0.8810 | 0.7510 | −0.1300 | 73.68% | 63.83% |
+| R17 baseline | 0.9405 | 0.7627 | −0.1777 | 63.16% | 63.83% |
+| R9+ | 0.9881 | 0.8059 | −0.1822 | 84.21% | 74.47% |
+| R17+ | 0.9762 | 0.8176 | −0.1585 | 89.47% | 76.60% |
+
+Every experiment performs worse on test AUC than on validation AUC. The decrease ranges from `0.1300` to `0.1822`. This is a central result rather than a minor detail: with only 19 validation patients, checkpoint selection and threshold selection can fit idiosyncrasies of that small group.
+
+R17 baseline validation accuracy does not reveal its strong validation AUC because it predicts every validation patient malignant at `0.5`, just as it does on the test set. This further demonstrates that threshold-independent ranking and threshold-dependent classification answer different questions.
+
+## Patient Probability Analysis
+
+### Test Probability Distributions
+
+| Experiment | True class | Mean malignancy probability | Median | Minimum | Maximum |
+|---|---|---:|---:|---:|---:|
+| R9 baseline | Benign | 0.3099 | 0.1043 | 0.0131 | 0.9265 |
+| R9 baseline | Malignant | 0.5836 | 0.6116 | 0.0805 | 0.9959 |
+| R17 baseline | Benign | 0.9998 | 0.9999 | 0.9983 | 0.9999 |
+| R17 baseline | Malignant | 0.9999 | 0.9999 | 0.9996 | 1.0000 |
+| R9+ | Benign | 0.1755 | 0.1028 | 0.0078 | 0.6891 |
+| R9+ | Malignant | 0.5270 | 0.6182 | 0.0292 | 0.9957 |
+| R17+ | Benign | 0.2206 | 0.0581 | 0.0003 | 0.9508 |
+| R17+ | Malignant | 0.6692 | 0.7656 | 0.0058 | 0.9999 |
+
+R17+ has the largest separation between the class means: `0.6692 − 0.2206 = 0.4486`. R9+ has a mean separation of `0.3515`, while the baseline R9 separation is `0.2737`. The R17 baseline class means are nearly identical because its outputs are saturated near one.
+
+The wide minimum-to-maximum ranges also show substantial overlap. Some malignant patients receive very low probabilities, and a small number of benign patients receive very high probabilities. Therefore, no single threshold perfectly separates the test classes.
+
+### R17+ Misclassified Patients at Threshold 0.5
+
+| Patient | True class | Malignancy probability | ROI count | Error type |
+|---|---|---:|---:|---|
+| `BreaDM-Be-2102` | Benign | 0.9508 | 9 | False positive |
+| `BreaDM-Be-1826` | Benign | 0.8584 | 2 | False positive |
+| `BreaDM-Be-1810` | Benign | 0.8218 | 2 | False positive |
+| `BreaDM-Ma-2126` | Malignant | 0.4490 | 7 | False negative |
+| `BreaDM-Ma-1915` | Malignant | 0.3095 | 16 | False negative |
+| `BreaDM-Ma-1921` | Malignant | 0.2049 | 5 | False negative |
+| `BreaDM-Ma-2038` | Malignant | 0.1850 | 2 | False negative |
+| `BreaDM-Ma-2122` | Malignant | 0.1233 | 5 | False negative |
+| `BreaDM-Ma-2141` | Malignant | 0.0338 | 5 | False negative |
+| `BreaDM-Ma-1909` | Malignant | 0.0172 | 3 | False negative |
+| `BreaDM-Ma-2109` | Malignant | 0.0058 | 5 | False negative |
+
+Several errors are confident rather than borderline. For example, three benign patients receive probabilities above `0.82`, and three malignant patients receive probabilities below `0.04`. These cases are useful candidates for qualitative review of masks, lesion appearance, channel construction, and possible label or acquisition differences.
+
+The number of ROIs alone does not explain the errors. Misclassified patients range from two to 16 ROIs. Patient `BreaDM-Ma-1915` remains a false negative despite having 16 ROIs, while some two-ROI patients are confidently misclassified in both directions.
+
+### Comparison With Paper-Reported Results
+
+| Comparison | Accuracy gap | AUC gap |
+
+The small 19-patient validation set produced substantially higher AUC estimates than the 47-patient test set. This validation-to-test gap is consistent with checkpoint-selection variance and overfitting. It is also why further hyperparameter tuning should not use the test set.
+
+### Training Behavior
+
+| Experiment | Best validation epoch | Recorded stopping epoch | Epochs after best checkpoint | Interpretation |
+|---|---:|---:|---:|---|
+| R9 baseline | 25 | 45 | 20 | Validation performance peaked well before training ended |
+| R17 baseline | 2 | 22 | 20 | Very early peak suggests rapid overfitting or unstable calibration |
+| R9+ | 11 | 31 | 20 | Early stopping preserved the strongest validation checkpoint |
+| R17+ | 19 | 39 | 20 | Later peak than R17 baseline, consistent with more controlled fine-tuning |
+
+All runs contain 20 recorded epochs after the best validation-AUC epoch, which is consistent with an early-stopping patience of 20 epochs. The selected checkpoint—not the last training epoch—should be used for final evaluation.
+
+The high final training accuracies do not imply high generalization:
+
+| Experiment | Final training accuracy | Test accuracy | Train–test gap |
+|---|---:|---:|---:|
+| R9 baseline | 98.56% | 63.83% | 34.73 pp |
+| R17 baseline | 95.86% | 63.83% | 32.03 pp |
+| R9+ | 93.92% | 74.47% | 19.45 pp |
+| R17+ | 98.14% | 76.60% | 21.54 pp |
+
+The improved runs reduce the train–test accuracy gap relative to the baselines, although R17+ still fits the training set very strongly. Because training accuracy is calculated on correlated ROIs and test accuracy is calculated on patients, this gap is descriptive rather than a perfectly like-for-like comparison.
+
+## Segmentation Training Summaries
+
+The supplied segmentation CSVs contain training and validation histories but do not contain test-mask predictions or a common final test-summary file. The table therefore reports only values that can be verified from those histories.
+> [!NOTE]
+> Dice and IoU values are only directly comparable when they use the same class definition, sample set, empty-mask policy, and aggregation method. Foreground Dice, foreground IoU, and macro mIoU should not be treated as interchangeable.
+
+### Understanding the Segmentation Metrics
+
+| Metric | Question answered | Important limitation |
+|---|---|---|
+| Dice similarity coefficient | How strongly do predicted and true tumor regions overlap? | Can vary depending on empty-mask handling and per-image vs. global aggregation |
+| Tumor IoU | What fraction of the union of predicted and true tumor pixels is correctly overlapped? | Numerically lower than Dice for the same predictions |
+| Mean IoU | What is the mean overlap across included classes? | May be inflated by the dominant background class |
+| Precision / PPV | Of all pixels predicted as tumor, how many are truly tumor? | Does not measure missed tumor pixels |
+| Sensitivity / recall | Of all true tumor pixels, how many were detected? | Does not measure false-positive regions |
+
+For the same binary foreground predictions, Dice and foreground IoU are related by:
+
+```text
+Dice = 2 × IoU / (1 + IoU)
+IoU  = Dice / (2 − Dice)
+```
+
+This relationship does not necessarily hold between foreground Dice and a separately averaged macro mIoU value. Metric definitions must therefore be documented before comparing tables from different implementations.
+
+### Segmentation Generalization Caveat
+
+The best validation metrics identify promising checkpoints but are not substitutes for final test metrics. The segmentation histories use different column schemas, suggesting that the runs did not all record exactly the same definitions. A fair final table should rerun every saved checkpoint through one shared evaluator with:
+
+- the same test patients and masks;
+- the same image resolution;
+- the same probability threshold;
+- identical empty-mask handling;
+- foreground Dice and foreground IoU;
+- the same macro/background policy; and
+- bootstrap confidence intervals at the patient level.
+
+## Main Findings
+
+1. **Patient-level splitting materially improves experimental validity.** The audit found 43 R9 files from six training patients physically located in the released test directory.
+
+These experiments should be considered preliminary because they use one canonical split, one recorded run per configuration, and a relatively small test set.
+
+## What the Results Do and Do Not Show
+
+### Supported by the supplied data
+
+- The canonical R9 and R17 manifests contain the same 232 patients and 1,722 ROIs.
+- Forty-three R9 files from six training patients were physically located in the released test directory.
+- R9+ and R17+ outperform their corresponding reconstruction baselines in accuracy, balanced accuracy, and AUC.
+- R17 baseline collapses to all-malignant predictions at threshold `0.5`.
+- R17+ has the strongest test AUC and accuracy among the reconstructed classification experiments.
+- R9+ has the strongest test specificity and balanced accuracy at threshold `0.5`.
+- Validation performance is consistently more optimistic than test performance.
+- The validation-derived thresholds increase sensitivity at the cost of specificity on the test set.
+
+### Not established by the current data
+
+- That any reconstructed model is clinically useful.
+- That the improved configuration will outperform the baselines across random seeds or alternative patient splits.
+- That R17 is universally superior to R9.
+- That the source paper's results are wrong; the evaluation protocols are not directly equivalent.
+- That the segmentation models can be ranked fairly from validation histories alone.
+- That the reported probabilities are calibrated estimates of real-world malignancy risk.
+- That performance will transfer to another institution, scanner, acquisition protocol, or patient population.
+
+## Limitations
+
+- The test set contains only 47 patients.
+| 6 | Use cross-validation or repeated patient-level splits | Tests whether conclusions depend on one split |
+| 7 | Explore temporal fusion without test-set tuning | Evaluates whether R17's derived channels can be used more effectively |
+
+## Proposed Statistical Reporting
+
+Future result tables should report uncertainty rather than only point estimates.
+
+| Metric | Recommended uncertainty method | Sampling unit |
+|---|---|---|
+| AUC | Stratified patient bootstrap | Patient |
+| Accuracy | Patient bootstrap or exact binomial interval | Patient |
+| Sensitivity | Exact binomial or stratified bootstrap | Malignant patient |
+| Specificity | Exact binomial or stratified bootstrap | Benign patient |
+| Balanced accuracy | Stratified patient bootstrap | Patient |
+| Dice / IoU | Patient-level bootstrap after aggregating slices | Patient |
+
+The patient—not the ROI or image slice—should be the resampling unit. Resampling ROIs independently would violate the independence assumption and produce confidence intervals that are too narrow.
+
+For multi-seed experiments, report both sources of variability:
+
+```text
+Metric across seeds: mean ± standard deviation
+Patient uncertainty: 95% bootstrap confidence interval
+```
