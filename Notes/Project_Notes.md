@@ -846,4 +846,6 @@ The original BreastDM repository provided the LG-CAFN concept and training code 
 ---
 ## 7/29/2026
 
-## hello ##
+I created a FCN reproduction just to show another "regular" or conventional model
+Now I am focusing on making the git-hub useful and easy to read
+
