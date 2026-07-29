@@ -5,6 +5,7 @@
 This repository documents an independent attempt to reproduce parts of the BreastDM study:
 
 > Zhao, X. et al. “BreastDM: A DCE-MRI Dataset for Breast Tumor Image Segmentation and Classification.” *Computers in Biology and Medicine*, Volume 164, 2023, Article 107255.
+(copy and paste)
 
 During the reproduction, two separate problems were identified:
 
@@ -309,7 +310,6 @@ The BreastDM segmentation evaluation leaves several details missing or uncertain
 - the checkpoint-selection rule;
 - and whether every baseline used the same evaluation code.
 
-An independent researcher can still train segmentation models and obtain reasonable results. However, that researcher cannot determine which reasonable evaluation procedure should reproduce the exact published values.
 
 Exact reproduction requires clarification from the authors or a complete evaluation script that can be directly connected to the results table.
 
@@ -357,27 +357,13 @@ The available evidence supports the following conclusions:
 - The reported issue may involve aggregation, implementation, class definition, labeling, or transcription.
 - The segmentation table should be treated cautiously until the protocol is clarified.
 
-## 10. What the Segmentation Finding Does Not Prove
 
-The available evidence does not prove:
-
-- that the authors fabricated their results;
-- that every experiment in the paper is invalid;
-- that the classification results are necessarily affected by the segmentation metric problem;
-- that mIoU above Dice is always impossible;
-- that the BreastDM dataset is unusable;
-- that the authors intentionally used inconsistent evaluation;
-- or that an AI system caused the ambiguity.
-
-The paper was published in September 2023 and became available online in July 2023. Although ChatGPT existed at that time, there is no evidence that it caused these issues.
-
-Ordinary reporting mistakes, adapted evaluation code, inconsistent scripts, changed dataset archives, or omitted methodological details are more direct explanations.
 
 ---
 
 # Part II: LG-CAFN Classification Data Leakage
 
-## 11. The Released Split Anomaly
+## 10. The Released Split Anomaly
 
 The classification archive contains a split anomaly specifically in the raw:
 
@@ -410,7 +396,7 @@ In contrast, the raw `cls/img9Se` branch physically contains 53 test patients in
 
 The six additional patients are malignant patients that are already assigned to training.
 
-## 12. The Six Duplicated Patients
+## 11. The Six Duplicated Patients
 
 The affected patients are:
 
@@ -438,7 +424,7 @@ cls/img9Se/test/Malignant/<patient-name>/
 
 This is not merely an unusual directory arrangement. It creates patient-level train/test leakage if the physical folder structure is used without correction.
 
-## 13. Why This Is Patient-Level Leakage
+## 12. Why This Is Patient-Level Leakage
 
 MRI samples belonging to the same patient are correlated.
 
@@ -469,7 +455,7 @@ Because all six affected patients are malignant, the leak also introduces class-
 
 The exact amount of inflation cannot be calculated without evaluating the same original trained checkpoint with and without the leaked test samples. However, any evaluation that includes these patients in both training and testing should not be treated as a valid estimate of unseen-patient generalization.
 
-## 14. Possible Causes of the Archive Error
+## 13. Possible Causes of the Archive Error
 
 The released files do not reveal the exact cause of the anomaly.
 
@@ -485,11 +471,11 @@ The consistent 166/19/47 allocation in the other five branches strongly supports
 
 However, the released materials do not prove which packaging event caused the six patients to appear in the R9 test directory.
 
-## 15. What Was Done to Correct the Classification Data
+## 14. What Was Done to Correct the Classification Data
 
 The reproduction made the smallest defensible correction while preserving an audit trail.
 
-### 15.1 The Consistent Split Was Treated as Canonical
+### 14.1 The Consistent Split Was Treated as Canonical
 
 The 166/19/47 patient allocation shared by the unaffected branches was treated as the canonical split.
 
@@ -497,7 +483,7 @@ The six duplicated malignant patients remain assigned to training.
 
 They were not reassigned to testing because doing so would conflict with the split consistently used by the other branches.
 
-### 15.2 Only the Noncanonical Test Copies Were Excluded
+### 14.2 Only the Noncanonical Test Copies Were Excluded
 
 The 43 files belonging to the six training patients were excluded from:
 
@@ -509,7 +495,7 @@ Their legitimate training copies were retained.
 
 The correction therefore removes the contaminated test assignments without removing valid training data.
 
-### 15.3 The Original Archive Was Preserved
+### 14.3 The Original Archive Was Preserved
 
 The source archive was not silently rewritten.
 
@@ -520,7 +506,7 @@ Instead, the correction was represented through explicit manifests and exclusion
 - which patients were affected;
 - and what their canonical split should be.
 
-### 15.4 Explicit Manifests Were Created
+### 14.4 Explicit Manifests Were Created
 
 The corrected data inventory is recorded through:
 
@@ -539,7 +525,7 @@ noncanonical_split_assignment
 
 The R9 and R17 manifests define exactly which samples belong to each reconstructed experiment.
 
-### 15.5 Fail-Fast Leakage Checks Were Added
+### 14.5 Fail-Fast Leakage Checks Were Added
 
 The data loader collects patient IDs for training, validation, and testing and checks every pair of splits:
 
@@ -557,7 +543,7 @@ This prevents the experiment from silently continuing with contaminated splits.
 
 A leakage error is therefore treated as an invalid experiment rather than as a warning that can be ignored.
 
-### 15.6 Classification Was Evaluated at the Patient Level
+### 14.6 Classification Was Evaluated at the Patient Level
 
 The dataset contains multiple ROI samples per patient.
 
@@ -571,7 +557,7 @@ The corrected evaluation therefore:
 
 This gives every test patient one contribution to the final evaluation.
 
-### 15.7 Model Selection Was Kept Separate From Test Evaluation
+### 14.7 Model Selection Was Kept Separate From Test Evaluation
 
 Model checkpoints and optional decision thresholds were selected using training and validation data.
 
@@ -583,7 +569,7 @@ After selection:
 
 The test set was not used for model tuning or threshold optimization.
 
-### 15.8 Segmentation Assumptions Were Made Explicit
+### 14.8 Segmentation Assumptions Were Made Explicit
 
 Where the paper did not provide enough information, the reproduction documented its own choices, including:
 
@@ -602,7 +588,7 @@ The resulting experiments are described as reconstructions under documented assu
 
 # Part III: Consequences for Reproduction
 
-## 16. Why the Published Results Cannot Be Reproduced Directly
+## 15. Why the Published Results Cannot Be Reproduced Directly
 
 The segmentation and classification problems affect reproducibility in different ways.
 
@@ -636,7 +622,7 @@ Even after correcting the leak, an exact LG-CAFN reproduction still requires inf
 - checkpoint selection;
 - and threshold selection.
 
-## 17. Impact on Model Comparisons
+## 16. Impact on Model Comparisons
 
 The published results do not provide enough evidence to guarantee that all models were compared under the same conditions.
 
@@ -656,7 +642,7 @@ A claim that one model is better than another requires:
 
 Without those controls, a numerical ranking may reflect differences in evaluation rather than differences in model quality.
 
-## 18. What the Combined Evidence Supports
+## 17. What the Combined Evidence Supports
 
 The available evidence supports the following conclusions:
 
@@ -676,29 +662,11 @@ The available evidence supports the following conclusions:
 - Classification metrics should be reported at the patient level.
 - All reconstruction assumptions should be documented explicitly.
 
-## 19. What the Combined Evidence Does Not Support
 
-The evidence does not establish:
-
-- that the authors fabricated any result;
-- that every experiment in the paper is invalid;
-- that the paper’s classification results definitely used the contaminated archive;
-- that the leak caused a known numerical amount of score inflation;
-- that branches other than raw `img9Se` contain the same leakage;
-- that every mIoU-above-Dice result is mathematically impossible;
-- that the BreastDM dataset has no research value;
-- that any reproduced model is clinically useful;
-- or that the results will generalize to another institution or acquisition protocol.
-
-The released archive proves that the overlap exists. It does not prove that the authors used this exact contaminated copy to calculate the paper’s reported classification scores.
-
-That distinction is important and should be preserved.
-
----
 
 # Part IV: Questions That Still Need Answers
 
-## 20. Segmentation Questions for the Authors
+## 18. Segmentation Questions for the Authors
 
 The following questions are necessary for an exact segmentation reproduction:
 
@@ -725,7 +693,7 @@ The following questions are necessary for an exact segmentation reproduction:
 21. How was the final checkpoint selected?
 22. What threshold was used to convert probabilities into binary masks?
 
-## 21. Classification Questions for the Authors
+## 19. Classification Questions for the Authors
 
 The following questions are necessary for an exact LG-CAFN reproduction:
 
@@ -737,7 +705,7 @@ The following questions are necessary for an exact LG-CAFN reproduction:
 6. Were predictions evaluated per ROI or per patient?
 7. If evaluated per patient, how were multiple ROI probabilities aggregated?
 8. How do the paper’s classification groups correspond to the R9 and R17 inputs?
-9. What preprocessing was applied?
+9. What preprocessing was applied?* 
 10. How were model weights initialized?
 11. What augmentations were used?
 12. What checkpoint-selection rule was used?
@@ -745,13 +713,13 @@ The following questions are necessary for an exact LG-CAFN reproduction:
 14. Was the threshold selected from validation data?
 15. Were the reported metrics produced from the currently released archive or another internal dataset version?
 
-Until these questions are answered, the appropriate goal is a transparent reproduction under explicit assumptions, not a claim of exact replication.
+Until these questions are answered, the appropriate goal is a transparent reproduction under explicit assumptions, not a claim of exact replication, and I think you can see that by the discrepancy between my model scores and theirs!
 
 ---
 
 # Part V: Recommended Evaluation Procedure
 
-## 22. Recommended Segmentation Procedure
+## 20. Recommended Segmentation Procedure
 
 A careful reproduction should save one set of test predictions and calculate every segmentation metric from those same predictions.
 
@@ -790,7 +758,7 @@ Dice ≥ IoU
 
 If the check fails, evaluation should stop and report the inconsistency.
 
-## 23. Recommended Classification Procedure
+## 21. Recommended Classification Procedure
 
 A careful LG-CAFN reproduction should:
 
@@ -810,7 +778,7 @@ A careful LG-CAFN reproduction should:
 14. Report uncertainty using patient-level confidence intervals.
 15. Repeat experiments with multiple random seeds.
 
-## 24. Recommended Statistical Unit
+## 22. Recommended Statistical Unit
 
 The patient—not the ROI or image slice—should be the primary independent unit for classification analysis and uncertainty estimation.
 
@@ -850,26 +818,3 @@ The paper’s reported results should therefore be interpreted cautiously.
 A useful reproduction is still possible, but it must use a leakage-free patient split, clearly named metrics, one standardized evaluator, explicit aggregation rules, and a complete record of every assumption.
 
 ---
-
-# Sources
-
-- Zhao, X. et al. “BreastDM: A DCE-MRI Dataset for Breast Tumor Image Segmentation and Classification.” *Computers in Biology and Medicine*, Volume 164, 2023, Article 107255.  
-  [https://doi.org/10.1016/j.compbiomed.2023.107255](https://doi.org/10.1016/j.compbiomed.2023.107255)
-
-- Original BreastDM repository:  
-  [https://github.com/smallboy-code/Breast-cancer-dataset](https://github.com/smallboy-code/Breast-cancer-dataset)
-
-- Released UNeXt metric implementation:  
-  [https://github.com/smallboy-code/Breast-cancer-dataset/blob/master/Segmentation%20task/UNeXt-pytorch-main/metrics.py](https://github.com/smallboy-code/Breast-cancer-dataset/blob/master/Segmentation%20task/UNeXt-pytorch-main/metrics.py)
-
-- Released UNeXt validation implementation:  
-  [https://github.com/smallboy-code/Breast-cancer-dataset/blob/master/Segmentation%20task/UNeXt-pytorch-main/val.py](https://github.com/smallboy-code/Breast-cancer-dataset/blob/master/Segmentation%20task/UNeXt-pytorch-main/val.py)
-
-- DataSplitter_LG-CAFN Colab documenting the split anomaly:  
-  [https://colab.research.google.com/drive/1nmTf4lwkT2qb_VnZhznYJwRh9OvepVn-#scrollTo=Tdu7ND_YsqKV](https://colab.research.google.com/drive/1nmTf4lwkT2qb_VnZhznYJwRh9OvepVn-#scrollTo=Tdu7ND_YsqKV)
-
----
-
-## Intended Use
-
-This is an independent reproduction and data-audit report. It is not an official implementation from the BreastDM authors and is not intended for clinical diagnosis or treatment decisions.
