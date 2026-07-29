@@ -843,4 +843,7 @@ The original BreastDM repository provided the LG-CAFN concept and training code 
 | 5 | LG-CAFN-R+ | LG_CAFN_R9_PLUS | Validation Youden J | 0.723404 | 0.732353 | 0.700000 | 0.764706 | 0.805882 |
 | 6 | LG-CAFN-R+ | LG_CAFN_R17_PLUS | 0.5 | 0.765957 | 0.778431 | 0.733333 | 0.823529 | 0.817647 |
 | 7 | LG-CAFN-R+ | LG_CAFN_R17_PLUS | Validation Youden J | 0.765957 | 0.714706 | 0.900000 | 0.529412 | 0.817647 |
+---
+## 7/29/2026
 
+## hello ##
