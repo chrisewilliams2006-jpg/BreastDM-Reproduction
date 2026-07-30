@@ -806,25 +806,28 @@ The test set is not used during training, hyperparameter adjustment, early stopp
 
 ## Experimental Results
 
-Complete this section after training finishes.
-
 ### Best Validation Result
 
 | Metric | Result |
 |---|---:|
-| Best epoch | `TBD` |
-| Validation loss | `TBD` |
-| Validation Dice | `TBD` |
-| Validation IoU | `TBD` |
+| Best epoch by validation Dice | 3 |
+| Validation loss | 0.4641 |
+| Validation Dice | 54.55% |
+| Validation IoU | 44.13% |
 
 ### Final Test Result
 
 | Metric | Result |
 |---|---:|
-| Test loss | `TBD` |
-| Test Dice | `TBD` |
-| Test IoU | `TBD` |
+| Test loss | 0.4232 |
+| Test Dice | 58.84% |
+| Test IoU | 47.59% |
 | Prediction threshold | 0.5 |
+
+> **Result provenance:** These test values were preserved from the executed
+> Colab experiment record. The corresponding test-prediction CSV is not
+> available in the current repository, so the result should be treated as a
+> legacy recorded result rather than an independently recomputed result.
 
 ## General Dice Interpretation
 
