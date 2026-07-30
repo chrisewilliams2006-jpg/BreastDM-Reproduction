@@ -22,7 +22,23 @@ Compared with R9+, R17+ correctly detects three additional malignant patients bu
 
 ### Improvement Over Each Reconstruction Baseline
 
-| Comparison at threshold 0.5 | Accuracy change | Balanced-accuracy change | Sensitivity change | Specificity change | AUC change |
+The following table compares each improved model with its corresponding
+baseline using patient-level test results at a fixed threshold of `0.5`.
+
+| Comparison | Accuracy change | Balanced-accuracy change | Sensitivity change | Specificity change | AUC change |
+|---|---:|---:|---:|---:|---:|
+| R9+ vs. R9 baseline | +10.64 pp | +13.43 pp | +3.33 pp | +23.53 pp | +0.0549 |
+| R17+ vs. R17 baseline | +12.77 pp | +27.84 pp | −26.67 pp | +82.35 pp | +0.0549 |
+
+R9+ improved every reported classification metric relative to the R9
+baseline. Its largest improvement was in specificity, which increased from
+70.59% to 94.12%.
+
+R17+ corrected the R17 baseline's all-malignant classification behavior.
+Specificity increased from 0.00% to 82.35%, while balanced accuracy increased
+from 50.00% to 77.84%. Sensitivity decreased from 100.00% to 73.33% because
+the baseline's perfect sensitivity resulted from predicting every patient as
+malignant, not from meaningful class separation.
 
 The validation-selected threshold changes the operating point but not AUC, because AUC evaluates ranking across thresholds. For R17+, the Youden threshold may be useful when false negatives are considered substantially more costly, but the fixed threshold generalized better as a balanced default.
 
@@ -91,6 +107,19 @@ The number of ROIs alone does not explain the errors. Misclassified patients ran
 ### Comparison With Paper-Reported Results
 
 | Comparison | Accuracy gap | AUC gap |
+|---|---:|---:|
+| R17+ vs. Paper Group 1 | −11.60 pp | −0.0978 |
+| R17+ vs. Paper Group 2 | −7.33 pp | −0.0650 |
+
+R17+ remained below both paper-reported LG-CAFN results. These comparisons
+should be interpreted cautiously because the paper's two experimental groups
+cannot be mapped confidently to the R9 and R17 reconstructions. The
+reconstructed experiments also use a corrected patient-level split and
+documented preprocessing decisions that were not fully specified in the paper.
+
+Because R17+ was developed after the baseline test results had been observed,
+this comparison is exploratory and does not constitute an independent
+confirmatory evaluation.
 
 The small 19-patient validation set produced substantially higher AUC estimates than the 47-patient test set. This validation-to-test gap is consistent with checkpoint-selection variance and overfitting. It is also why further hyperparameter tuning should not use the test set.
 
@@ -155,10 +184,48 @@ The best validation metrics identify promising checkpoints but are not substitut
 
 ## Main Findings
 
-1. **Patient-level splitting materially improves experimental validity.** The audit found 43 R9 files from six training patients physically located in the released test directory.
+1. **The released `cls/img9Se` split contains patient-level leakage.**
+   Forty-three files belonging to six malignant training patients also appear
+   in the released test directory. The corrected experiments exclude these
+   noncanonical test assignments.
 
-These experiments should be considered preliminary because they use one canonical split, one recorded run per configuration, and a relatively small test set.
+2. **The R17 baseline collapsed at the default threshold.**
+   Although it achieved a test AUC of 0.7627, it classified all 47 test
+   patients as malignant at a threshold of `0.5`. Its 63.83% accuracy therefore
+   matched the malignant prevalence of the test set.
 
+3. **The improved training strategy corrected the R17 class collapse.**
+   R17+ increased specificity from 0.00% to 82.35% and balanced accuracy from
+   50.00% to 77.84%.
+
+4. **R17+ achieved the strongest overall discrimination.**
+   Among the reconstructed classification experiments, R17+ achieved the
+   highest patient-level test accuracy at 76.60% and the highest ROC AUC at
+   0.8176.
+
+5. **R9+ produced the strongest benign-class performance.**
+   At a threshold of `0.5`, R9+ achieved the highest specificity at 94.12% and
+   the highest balanced accuracy at 78.73%.
+
+6. **Validation performance was consistently optimistic.**
+   Test AUC was lower than validation AUC in all four classification
+   experiments. The decreases ranged from 0.1300 to 0.1822, which is
+   consistent with uncertainty from the 19-patient validation set and
+   single-run checkpoint selection.
+
+7. **The improved models did not reach the paper-reported performance.**
+   This is a useful negative reproduction result, but the comparison is not
+   exact because the original preprocessing and evaluation procedures are
+   incompletely documented.
+
+8. **The improved-model results are exploratory.**
+   R9+ and R17+ were developed after baseline results on the same test split
+   had been observed. Test images were not used for gradient-based training,
+   checkpoint selection, or threshold optimization, but the improved
+   experimental design was test-informed.
+
+These findings are preliminary because they come from one canonical split,
+one recorded run per configuration, and a test set of only 47 patients.
 ## What the Results Do and Do Not Show
 
 ### Supported by the supplied data
@@ -184,9 +251,28 @@ These experiments should be considered preliminary because they use one canonica
 
 ## Limitations
 
-- The test set contains only 47 patients.
-| 6 | Use cross-validation or repeated patient-level splits | Tests whether conclusions depend on one split |
-| 7 | Explore temporal fusion without test-set tuning | Evaluates whether R17's derived channels can be used more effectively |
+- The classification test set contains only 47 patients: 17 benign and 30
+  malignant.
+- The validation set contains only 19 patients, making checkpoint and
+  threshold selection sensitive to a small number of cases.
+- Each configuration is represented by one recorded training run rather than
+  a multi-seed average.
+- Confidence intervals have not yet been calculated.
+- The experiments use one canonical patient split, so performance may depend
+  on the particular patient assignment.
+- The original paper and released code do not fully specify the conversion
+  from 9- and 17-channel MRI arrays to the three-channel model input.
+- Several architectural, preprocessing, and patient-aggregation decisions had
+  to be reconstructed.
+- The paper's two LG-CAFN experimental groups cannot be mapped confidently to
+  the R9 and R17 reconstructions.
+- R9+ and R17+ were developed after baseline test results had been observed,
+  so their test results are exploratory rather than confirmatory.
+- The segmentation histories do not include a shared final test-evaluation
+  file using identical metric definitions.
+- The results have not been validated using data from another institution,
+  scanner, acquisition protocol, or patient population.
+- These experiments do not establish clinical usefulness.
 
 ## Proposed Statistical Reporting
 
