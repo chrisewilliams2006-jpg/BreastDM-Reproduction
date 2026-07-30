@@ -1,11 +1,4 @@
 ## Full results (not abbreviated)
-Compared with R9+, R17+ correctly detects three additional malignant patients but incorrectly labels two additional benign patients as malignant. Its slightly lower balanced accuracy reflects this trade-off, while its higher AUC indicates the best threshold-independent ranking.
-
-### Improvement Over Each Reconstruction Baseline
-
-| Comparison at threshold 0.5 | Accuracy change | Balanced-accuracy change | Sensitivity change | Specificity change | AUC change |
-
-The validation-selected threshold changes the operating point but not AUC, because AUC evaluates ranking across thresholds. For R17+, the Youden threshold may be useful when false negatives are considered substantially more costly, but the fixed threshold generalized better as a balanced default.
 
 ---
 ### Test-set reuse disclosure
@@ -24,6 +17,16 @@ R9+ and R17+ should be interpreted as exploratory rather than as performance
 estimates from a completely untouched final test set.
 
 ---
+
+Compared with R9+, R17+ correctly detects three additional malignant patients but incorrectly labels two additional benign patients as malignant. Its slightly lower balanced accuracy reflects this trade-off, while its higher AUC indicates the best threshold-independent ranking.
+
+### Improvement Over Each Reconstruction Baseline
+
+| Comparison at threshold 0.5 | Accuracy change | Balanced-accuracy change | Sensitivity change | Specificity change | AUC change |
+
+The validation-selected threshold changes the operating point but not AUC, because AUC evaluates ranking across thresholds. For R17+, the Youden threshold may be useful when false negatives are considered substantially more costly, but the fixed threshold generalized better as a balanced default.
+
+
 ### Exact Validation-Selected Thresholds
 
 | Experiment | Validation-selected threshold | Validation sensitivity | Validation specificity | Validation Youden J |
