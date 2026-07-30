@@ -849,3 +849,12 @@ The original BreastDM repository provided the LG-CAFN concept and training code 
 I created a FCN reproduction just to show another "regular" or conventional model
 Now I am focusing on making the git-hub useful and easy to read
 
+## 7/30/2026
+
+I think the project is pretty much finished now. I am still reading through everything but ultimately I am not that there is much left to do. I think I am done with the coding part of the assignment I don't know what other models I need to reproduce. The major issue with reproducing everything I am not like the scientists who get all these really nice fancy computers or access to super special GPU's I basically just had to use google colab for everything. 
+
+The only thing that I am really focused on right now is going through all the readme.md's and making sure that eveyrhting makes sense. I think I will not fully correct all the mistakes in this one just because its my notes and not really that important. In a real github project I wouldn't even have this. 
+
+| thing one | thing two |
+|---:|---|
+| yes | no | 
