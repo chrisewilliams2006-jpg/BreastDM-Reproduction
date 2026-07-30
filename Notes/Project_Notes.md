@@ -885,3 +885,7 @@ would require complete retraining. It could improve feature exchange, but it
 could also increase optimization complexity and overfitting on the relatively
 small training cohort. Evaluating full four-stage bidirectional fusion is
 therefore reserved as a possible future experiment.
+
+## Final thing
+
+Alright so I think my project and readme's are very consistent, I have completed everything and ultimately made a good project, the next big thing that I will do is create a new github that is more conventional to how githubs should look like with all the arg parse stuff. 
