@@ -69,6 +69,9 @@ identical metric definitions.
   uncertainty created by a validation set of only 19 patients.
 - The results are preliminary single-run findings and should be followed by
   repeated seeds, patient-level confidence intervals, and external validation.
+---
+## Improved Model
+the improved model notebook was informed by baseline test results. 
 
 ## Repository Contents
 
