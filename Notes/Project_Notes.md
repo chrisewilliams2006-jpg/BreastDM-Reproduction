@@ -855,3 +855,6 @@ I think the project is pretty much finished now. I am still reading through ever
 
 The only thing that I am really focused on right now is going through all the readme.md's and making sure that eveyrhting makes sense. I think I will not fully correct all the mistakes in this one just because its my notes and not really that important. In a real github project I wouldn't even have this. 
 
+### New LG-CAFN issue 
+
+The improved R9+/R17+ models compute four CNN–Transformer fusion stages, but the updated CNN output from the first three stages is discarded. Only the final fused CNN output reaches the classifier, so the architecture is not fully bidirectional as described. The frozen pretrained backbone also remains in training mode, allowing BatchNorm statistics and dropout behavior to change during warm-up. Smaller issues include testing GPU batch size only for R9, underweighting the final gradient-accumulation group, and insufficient validation of cached statistics and manifests. Your existing metrics remain valid for the code that ran, but they should be described as results from a partially bidirectional reconstruction rather than a full four-stage LG-CAFN implementation.
