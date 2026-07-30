@@ -855,6 +855,3 @@ I think the project is pretty much finished now. I am still reading through ever
 
 The only thing that I am really focused on right now is going through all the readme.md's and making sure that eveyrhting makes sense. I think I will not fully correct all the mistakes in this one just because its my notes and not really that important. In a real github project I wouldn't even have this. 
 
-| thing one | thing two |
-|---:|---:|
-| yes | no | 
