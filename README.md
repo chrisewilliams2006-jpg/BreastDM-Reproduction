@@ -70,8 +70,15 @@ identical metric definitions.
 - The results are preliminary single-run findings and should be followed by
   repeated seeds, patient-level confidence intervals, and external validation.
 ---
-## Improved Model
-the improved model notebook was informed by baseline test results. 
+
+## Improved-Model Disclosure
+
+The R9+ and R17+ configurations were developed after examining baseline test
+behavior. Test samples were not used for gradient training, checkpoint
+selection, or threshold optimization; however, the improved configurations were
+indirectly informed by earlier test observations. Their results should therefore
+be interpreted as exploratory rather than as evaluations on a completely
+untouched final holdout set.
 
 ## Repository Contents
 
