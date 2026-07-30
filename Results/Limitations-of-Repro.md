@@ -567,7 +567,7 @@ After selection:
 - the threshold was frozen; and
 - the corrected 47-patient test set was evaluated.
 
-The test set was not used for model tuning or threshold optimization.
+Test samples were not used for gradient-based training, checkpoint selection, or threshold optimization. However, baseline test observations informed the later R9+/R17+ experimental design, so the improved results are exploratory.
 
 ### 14.8 Segmentation Assumptions Were Made Explicit
 
