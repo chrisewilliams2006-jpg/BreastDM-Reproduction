@@ -859,5 +859,29 @@ The only thing that I am really focused on right now is going through all the re
 
 The improved R9+/R17+ models compute four CNN–Transformer fusion stages, but the updated CNN output from the first three stages is discarded. Only the final fused CNN output reaches the classifier, so the architecture is not fully bidirectional as described. The frozen pretrained backbone also remains in training mode, allowing BatchNorm statistics and dropout behavior to change during warm-up. Smaller issues include testing GPU batch size only for R9, underweighting the final gradient-accumulation group, and insufficient validation of cached statistics and manifests. Your existing metrics remain valid for the code that ran, but they should be described as results from a partially bidirectional reconstruction rather than a full four-stage LG-CAFN implementation.
 
-However, I don't really think its fair to attribute my model to being wrong or my readme.md's to be incorrect, as the CNN  > Transformers are properly bidirectional for all four levels, but going back down the other way, from Transformer > CNN, it is only bidirectional on number 4. I am not going to change it because doing so will probably affect training, causing overfitting in the model, which I think it might be predisposed to doing.
+However, I don't really think its fair to attribute my model to being wrong or my readme.md's to be incorrect.
 
+The current LG-CAFN-R implementation performs CNN-to-Transformer feature
+fusion at all four coupling stages. Updated Transformer tokens are propagated
+between stages, allowing information from every selected CNN feature level to
+influence the Transformer representation.
+
+Each coupling unit also calculates a Transformer-to-CNN update. However, the
+CNN-side updates from the first three stages are not propagated through later
+CNN stages because the backbone feature maps are computed before the fusion
+loop. Only the Transformer-to-CNN update produced by the fourth coupling stage
+contributes directly to the final classifier.
+
+The model is therefore more precisely described as using multistage
+CNN-to-Transformer fusion with final-stage Transformer-to-CNN fusion, rather
+than fully bidirectional fusion at all four stages. This does not make the
+implementation or its reported results invalid; it clarifies the architecture
+that produced those results.
+
+I am retaining this architecture and its existing results rather than
+retroactively changing the model. Propagating Transformer-to-CNN updates
+through every CNN stage would define a materially different architecture and
+would require complete retraining. It could improve feature exchange, but it
+could also increase optimization complexity and overfitting on the relatively
+small training cohort. Evaluating full four-stage bidirectional fusion is
+therefore reserved as a possible future experiment.
