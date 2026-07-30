@@ -858,3 +858,6 @@ The only thing that I am really focused on right now is going through all the re
 ### New LG-CAFN issue 
 
 The improved R9+/R17+ models compute four CNN–Transformer fusion stages, but the updated CNN output from the first three stages is discarded. Only the final fused CNN output reaches the classifier, so the architecture is not fully bidirectional as described. The frozen pretrained backbone also remains in training mode, allowing BatchNorm statistics and dropout behavior to change during warm-up. Smaller issues include testing GPU batch size only for R9, underweighting the final gradient-accumulation group, and insufficient validation of cached statistics and manifests. Your existing metrics remain valid for the code that ran, but they should be described as results from a partially bidirectional reconstruction rather than a full four-stage LG-CAFN implementation.
+
+However, I don't really think its fair to attribute my model to being wrong or my readme.md's to be incorrect, as the CNN  > Transformers are properly bidirectional for all four levels, but going back down the other way, from Transformer > CNN, it is only bidirectional on number 4. I am not going to change it because doing so will probably affect training, causing overfitting in the model, which I think it might be predisposed to doing.
+
