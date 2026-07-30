@@ -1,6 +1,23 @@
 ## Abbreviated Results 
 these are all taken from the csv files which were created in the code. 
 
+---
+### Test-set reuse disclosure
+It is important to be careful with using the same test-set. There are certain rules that I followed for myself, but for the purposes of scientific integrity, I will disclose that:
+
+The baseline R9 and R17 models were evaluated on the canonical test set
+before the improved R9+ and R17+ configurations were developed. Observations
+from the baseline test evaluations, including the R17 baseline's tendency to
+predict all patients as malignant at a threshold of 0.5, informed subsequent
+model-development decisions such as class weighting and gradual fine-tuning.
+
+The test samples were never used for gradient-based training, checkpoint
+selection, or threshold optimization. However, because the improved
+experimental design was informed by earlier results on the same test set,
+R9+ and R17+ should be interpreted as exploratory rather than as performance
+estimates from a completely untouched final test set.
+
+---
 
 | Comparison | Accuracy gap | AUC gap |
 |---|---:|---:|
