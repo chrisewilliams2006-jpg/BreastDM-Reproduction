@@ -43,7 +43,8 @@ The supplied segmentation CSVs contain training and validation histories but do 
 
 | Experiment | Epochs recorded | Best validation Dice | Epoch of best Dice | Additional best validation metric |
 |---|---:|---:|---:|---|
-| U-Net run | 14 | **67.57%** | 10 | Tumor IoU 51.02%; mIoU 75.45% |
+| U-Net first trial | 8 completed | **58.46%** | 3 | Recoverable `best_unet.pth`; run interrupted during epoch 9 |
+| Legacy U-Net history | 14 | **67.57%** | 10 | Tumor IoU 51.02%; mIoU 75.45%; corresponding checkpoint unavailable/unconfirmed |
 | FCN run | 43 | 62.73% | 23 | IoU 52.59% |
 | UNeXt run | 18 | 54.55% | 3 | Best recorded IoU 45.05% at epoch 11 |
 
