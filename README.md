@@ -45,7 +45,8 @@ The available segmentation histories support the following validation results:
 
 | Experiment | Best validation Dice | Best-Dice epoch | Additional validation result |
 |---|---:|---:|---|
-| U-Net | **67.57%** | 10 | Tumor IoU 51.02%; mIoU 75.45% |
+| U-Net first trial | **58.46%** | 3 | Recoverable checkpoint; training interrupted during epoch 9; validation-only |
+| Legacy U-Net history | **67.57%** | 10 | 14-epoch history available; corresponding checkpoint and run provenance not confirmed |
 | FCN | 62.73% | 23 | IoU 52.59% |
 | UNeXt | 54.55% | 3 | Best recorded IoU 45.05% at epoch 11 |
 
