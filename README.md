@@ -57,6 +57,28 @@ test-prediction CSV. The segmentation models should not be ranked conclusively
 until all saved checkpoints are evaluated with one shared test evaluator and
 identical metric definitions.
 
+### Matched Segmentation Test Evaluation
+
+The validation-selected checkpoints were evaluated on the same held-out test
+split containing 4,284 images from 35 patients. All models used a fixed
+foreground threshold of 0.5 and the same metric implementation. Predictions
+were resized to the original ground-truth mask resolution before evaluation.
+
+| Model | Selected epoch | Global Dice | Global foreground IoU | Mean patient Dice | Mean patient foreground IoU | Macro mIoU |
+|---|---:|---:|---:|---:|---:|---:|
+| Improved UNeXt | 23 | **66.27%** | **49.55%** | 56.11% | 43.21% | **74.69%** |
+| FCN-ResNet50 | 10 | 59.61% | 42.46% | 46.43% | 34.67% | 71.13% |
+| U-Net first trial | 3 | 59.31% | 42.15% | **58.07%** | **45.77%** | 70.99% |
+
+Improved UNeXt achieved the highest globally pooled foreground overlap, while
+U-Net achieved the highest mean patient-level Dice and IoU. This difference
+shows that model ranking depends on aggregation: global metrics give greater
+weight to patients and slices containing more tumor pixels, whereas the mean
+patient metrics give every patient equal weight.
+
+Macro mIoU includes the background class and is therefore higher than
+foreground IoU. It should not be interpreted as tumor IoU.
+
 ## Main Conclusions
 
 - Patient-level dataset auditing is essential: the released R9 split contains
