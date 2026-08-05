@@ -1,4 +1,4 @@
-## 6/28/2026 
+4444## 6/28/2026 
 
 There is a very specific format the dataset has to be in for any and all of the project code to work. I have listed it below. 
 
@@ -889,3 +889,391 @@ therefore reserved as a possible future experiment.
 ## Final thing
 
 Alright so I think my project and readme's are very consistent, I have completed everything and ultimately made a good project, the next big thing that I will do is create a new github that is more conventional to how githubs should look like with all the arg parse stuff. 
+---
+## 8/5/2026
+
+### Testing uncertainty in my accuracy 
+# BreastDM Patient-Level Bootstrap Confidence Intervals
+
+## What We Did
+
+We created a Google Colab notebook that calculates patient-level bootstrap confidence intervals for the four main BreastDM classification experiments.
+
+The notebook is named:
+
+```text
+BreastDM_Classification_Patient_Bootstrap_Colab.ipynb
+```
+
+It is stored in:
+
+```text
+notebooks/evaluation/
+```
+
+The analysis uses existing patient-level predictions. It does not retrain the models, reload checkpoints, or change model performance.
+
+## Purpose
+
+Patient bootstrapping estimates the uncertainty surrounding the reported classification metrics.
+
+Instead of reporting only:
+
+```text
+Accuracy: 76.60%
+```
+
+we can report:
+
+```text
+Accuracy: 76.60% (95% CI: lower bound–upper bound)
+```
+
+The original accuracy remains unchanged. The confidence interval describes how much the measured result could vary across different samples of similar patients.
+
+## Test Dataset
+
+The classification test set contains:
+
+- 47 total patients
+- 17 benign patients
+- 30 malignant patients
+
+Some patients have multiple ROIs. The ROI predictions were previously aggregated to produce one malignancy probability per patient.
+
+Therefore, the patient—not the individual ROI—is used as the independent sampling unit. Bootstrapping individual ROIs would incorrectly treat correlated observations from the same patient as independent data.
+
+## Classification Experiments
+
+The notebook evaluates four reconstructed LG-CAFN experiments:
+
+| Experiment | Patient-prediction file |
+|---|---|
+| LG-CAFN-R9 baseline | `test_patient_predictions(3).csv` |
+| LG-CAFN-R17 baseline | `test_patient_predictions(1).csv` |
+| LG-CAFN-R9+ | `test_patient_predictions.csv` |
+| LG-CAFN-R17+ | `test_patient_predictions(2).csv` |
+
+These files are stored in:
+
+```text
+results/csv/
+```
+
+Each file contains:
+
+- Patient ID
+- True diagnostic label
+- Predicted malignancy probability
+- Number of ROIs belonging to the patient
+
+## Input Validation
+
+Before running the bootstrap, the notebook verifies that:
+
+- All four prediction files exist.
+- Every file contains the required columns.
+- Every file contains exactly 47 unique patients.
+- Every file contains 17 benign and 30 malignant patients.
+- Patient labels are either `0` or `1`.
+- Predicted probabilities are between `0` and `1`.
+- No required values are missing.
+- No patient IDs are duplicated.
+- The same patients and labels appear in all four experiments.
+
+The notebook stops with an error if any validation check fails.
+
+## Point-Estimate Verification
+
+Before calculating confidence intervals, the notebook reproduces the previously reported classification results.
+
+| Experiment | Accuracy | ROC AUC |
+|---|---:|---:|
+| LG-CAFN-R9 baseline | 63.83% | 0.7510 |
+| LG-CAFN-R17 baseline | 63.83% | 0.7627 |
+| LG-CAFN-R9+ | 74.47% | 0.8059 |
+| LG-CAFN-R17+ | 76.60% | 0.8176 |
+
+The notebook also verifies the confusion matrices calculated at the fixed classification threshold of `0.5`.
+
+| Experiment | TP | TN | FP | FN |
+|---|---:|---:|---:|---:|
+| LG-CAFN-R9 baseline | 18 | 12 | 5 | 12 |
+| LG-CAFN-R17 baseline | 30 | 0 | 17 | 0 |
+| LG-CAFN-R9+ | 19 | 16 | 1 | 11 |
+| LG-CAFN-R17+ | 22 | 14 | 3 | 8 |
+
+This verification ensures that every prediction file is assigned to the correct experiment before the confidence intervals are calculated.
+
+## Classification Metrics
+
+The notebook calculates 95% confidence intervals for:
+
+- Accuracy
+- Balanced accuracy
+- Sensitivity
+- Specificity
+- ROC AUC
+
+For the threshold-dependent metrics, a patient is classified as malignant when:
+
+```python
+predicted_malignant = probability >= 0.5
+```
+
+The malignant class is encoded as label `1`, while the benign class is encoded as label `0`.
+
+Sensitivity is calculated as:
+
+```text
+Sensitivity = TP / (TP + FN)
+```
+
+Specificity is calculated as:
+
+```text
+Specificity = TN / (TN + FP)
+```
+
+Balanced accuracy is calculated as:
+
+```text
+Balanced accuracy = (Sensitivity + Specificity) / 2
+```
+
+ROC AUC is calculated from the continuous predicted probabilities and does not depend on the classification threshold.
+
+## Bootstrap Configuration
+
+The analysis uses the following settings:
+
+```text
+Bootstrap iterations: 10,000
+Bootstrap seed: 20260805
+Confidence level: 95%
+Classification threshold: 0.5
+Sampling unit: Patient
+Bootstrap method: Stratified percentile bootstrap
+```
+
+The fixed random seed makes the analysis reproducible.
+
+## How the Bootstrap Works
+
+During each bootstrap iteration:
+
+1. The notebook samples 17 benign patients with replacement.
+2. It samples 30 malignant patients with replacement.
+3. It combines the sampled patients into one bootstrap test set.
+4. It recalculates all five classification metrics.
+5. It stores the results from that iteration.
+
+Sampling with replacement means that the same patient may appear multiple times in a bootstrap sample, while another patient may not appear in that sample.
+
+This process is repeated 10,000 times.
+
+The 95% confidence interval is calculated using the 2.5th and 97.5th percentiles of the resulting bootstrap distribution.
+
+## Why the Bootstrap Is Stratified
+
+Stratification preserves the original test-set class counts:
+
+- 17 benign patients
+- 30 malignant patients
+
+It also guarantees that every bootstrap sample contains both diagnostic classes. Without both classes, ROC AUC, sensitivity, or specificity could become undefined.
+
+## Paired Model Comparisons
+
+All four models were evaluated on the same 47 patients. The notebook therefore performs paired bootstrap comparisons using the same sampled patient indices for both models.
+
+The following comparisons are calculated:
+
+- LG-CAFN-R9+ minus LG-CAFN-R9 baseline
+- LG-CAFN-R17+ minus LG-CAFN-R17 baseline
+- LG-CAFN-R17+ minus LG-CAFN-R9+
+
+For example:
+
+```text
+AUC difference = R17+ AUC − R17 baseline AUC
+```
+
+A 95% confidence interval is calculated for every paired metric difference.
+
+If the confidence interval includes zero, the analysis does not establish that the observed difference is stable across bootstrap patient samples at the selected confidence level.
+
+## Generated Result Files
+
+After the notebook finishes, it creates:
+
+```text
+results/classification_bootstrap/classification_metrics_with_ci.csv
+results/classification_bootstrap/paired_model_differences.csv
+results/classification_bootstrap/bootstrap_metadata.json
+```
+
+### `classification_metrics_with_ci.csv`
+
+This file contains the point estimates and 95% confidence intervals for all four experiments and all five metrics.
+
+Important columns include:
+
+```text
+experiment
+threshold
+n_patients
+n_benign
+n_malignant
+metric
+estimate
+ci_lower
+ci_upper
+confidence_level
+bootstrap_iterations
+bootstrap_seed
+bootstrap_method
+sampling_unit
+```
+
+### `paired_model_differences.csv`
+
+This file contains the paired comparisons between selected models.
+
+Important columns include:
+
+```text
+model_a
+model_b
+metric
+estimate_a
+estimate_b
+observed_difference
+ci_lower
+ci_upper
+includes_zero
+confidence_level
+bootstrap_iterations
+bootstrap_seed
+```
+
+### `bootstrap_metadata.json`
+
+This file records:
+
+- Bootstrap method
+- Number of bootstrap iterations
+- Random seed
+- Confidence level
+- Classification threshold
+- Class counts
+- Experiment-to-file mappings
+- Interpretation limitations
+
+The notebook also packages the three result files into:
+
+```text
+BreastDM_classification_bootstrap_results.zip
+```
+
+When the notebook is run in Google Colab, the ZIP file is automatically downloaded.
+
+## How to Run the Notebook
+
+1. Upload `BreastDM_Classification_Patient_Bootstrap_Colab.ipynb` to Google Colab.
+2. Open the notebook.
+3. Select **Runtime → Run all**.
+4. Confirm that the existing point estimates are reproduced.
+5. Wait for all 10,000 bootstrap iterations to finish.
+6. Download the generated ZIP file.
+7. Save the executed notebook by selecting **File → Download → Download .ipynb**.
+
+## How to Report the Results
+
+Results should be reported in the following format:
+
+```text
+Point estimate (95% CI: lower bound–upper bound)
+```
+
+For example:
+
+```text
+ROC AUC: 0.8176 (95% CI: lower bound–upper bound)
+```
+
+The actual confidence-interval values must come from the generated result CSV. Placeholder or example values should not be reported as actual results.
+
+The final results table should use the following structure:
+
+| Experiment | Accuracy (95% CI) | Balanced Accuracy (95% CI) | Sensitivity (95% CI) | Specificity (95% CI) | ROC AUC (95% CI) |
+|---|---|---|---|---|---|
+| LG-CAFN-R9 baseline | Pending | Pending | Pending | Pending | Pending |
+| LG-CAFN-R17 baseline | Pending | Pending | Pending | Pending | Pending |
+| LG-CAFN-R9+ | Pending | Pending | Pending | Pending | Pending |
+| LG-CAFN-R17+ | Pending | Pending | Pending | Pending | Pending |
+
+## Interpretation
+
+Patient bootstrapping does not improve the trained model or increase its accuracy.
+
+It estimates how uncertain the observed result is because the test set contains only 47 patients.
+
+This is particularly important for sensitivity and specificity:
+
+- Sensitivity is based on 30 malignant patients.
+- Specificity is based on 17 benign patients.
+- One malignant patient changes sensitivity by approximately 3.33 percentage points.
+- One benign patient changes specificity by approximately 5.88 percentage points.
+
+A wide confidence interval indicates that the point estimate depends substantially on which patients were included in the test sample. A narrower interval indicates greater stability across bootstrap patient samples.
+
+## Limitations
+
+These confidence intervals estimate uncertainty caused by the limited number of test patients.
+
+They do not measure uncertainty caused by:
+
+- Different training seeds
+- Random model initialization
+- Training instability
+- Checkpoint selection
+- Hyperparameter selection
+- Different patient splits
+- Dataset shift
+
+Each model configuration currently has one recorded training run. Multiple-seed training would be required to measure run-to-run training variability.
+
+The R9+ and R17+ results should also remain described as exploratory. Observations from the baseline test results helped inform the improved experiments, although the test data were not directly used for gradient-based training, checkpoint selection, or threshold optimization.
+
+## Repository Plan
+
+The notebook and generated result files should first be added to:
+
+```text
+BreastDM-Reproduction-Refactored-
+```
+
+This repository should be the authoritative source for the executable bootstrap analysis.
+
+After the results have been verified, the confidence intervals and their interpretation should be summarized in:
+
+```text
+BreastDM-Reproduction
+```
+
+The original reproduction repository should contain the updated notes and discussion, while the refactored repository contains the executable analysis and generated artifacts.
+
+## Summary
+
+We created a reproducible Google Colab notebook that uses 10,000 stratified patient-level bootstrap samples to calculate 95% confidence intervals for:
+
+- Accuracy
+- Balanced accuracy
+- Sensitivity
+- Specificity
+- ROC AUC
+
+The notebook also performs paired comparisons between the improved and baseline models.
+
+This analysis strengthens the statistical reporting of the BreastDM classification results without retraining or changing any model.
