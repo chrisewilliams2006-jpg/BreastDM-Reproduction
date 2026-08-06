@@ -62,13 +62,31 @@ The paper does not fully disclose the loss function, threshold, normalization, r
 > [!NOTE]
 > Dice and IoU values are only directly comparable when they use the same class definition, sample set, empty-mask policy, and aggregation method. Foreground Dice, foreground IoU, and macro mIoU should not be treated as interchangeable.
 
+## Classification Uncertainty
+
+Patient-level uncertainty was estimated using 10,000 stratified bootstrap
+samples of the 47-patient test set.
+
+| Experiment | Accuracy (95% CI) | ROC AUC (95% CI) |
+|---|---:|---:|
+| LG-CAFN-R9 baseline | 63.83% (51.06–76.60) | 0.7510 (0.5745–0.9000) |
+| LG-CAFN-R17 baseline | 63.83% (63.83–63.83) | 0.7627 (0.6157–0.8882) |
+| LG-CAFN-R9+ | 74.47% (61.70–85.11) | 0.8059 (0.6686–0.9176) |
+| LG-CAFN-R17+ | 76.60% (63.83–87.23) | 0.8176 (0.6784–0.9373) |
+
+Paired bootstrap analysis supported improvements in balanced accuracy and
+specificity for both improved models relative to their baselines. However, the
+paired AUC intervals included zero, and no paired R17+-versus-R9+ interval
+excluded zero.
+
 ## Main Findings
 
 1. **Patient-level splitting materially improves experimental validity.** The audit found 43 R9 files from six training patients physically located in the released test directory.
 2. **The 17-channel baseline was poorly calibrated at the default threshold.** It ranked patients above chance (`AUC = 0.7627`) but classified every test patient as malignant.
 3. **The improved training strategy corrected class collapse.** R17+ raised balanced accuracy from 50.00% to 77.84% and specificity from 0.00% to 82.35%.
 4. **R17+ is the strongest general-purpose classification result.** It achieved the highest accuracy (`76.60%`) and AUC (`0.8176`).
-5. **R9+ is the most conservative classifier.** It achieved the highest specificity (`94.12%`) and balanced accuracy (`78.73%`) at threshold `0.5`.
+5. R17+ has the highest observed accuracy and AUC, but paired bootstrap analysis
+does not establish its overall superiority over R9+.
 6. **Validation estimates are optimistic.** All classification runs reached much higher validation AUC than test AUC, emphasizing the need for repeated seeds and confidence intervals.
 7. **The improved models remain below the paper-reported results.** This is a useful negative reproduction result, particularly because the reconstruction uses explicit assumptions and leakage-corrected evaluation.
 
