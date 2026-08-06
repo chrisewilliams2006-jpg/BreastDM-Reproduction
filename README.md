@@ -27,9 +27,31 @@ All values below are patient-level test results at a decision threshold of
 | LG-CAFN-R9+ | 74.47% | **78.73%** | 63.33% | **94.12%** | 0.8059 |
 | LG-CAFN-R17+ | **76.60%** | 77.84% | **73.33%** | 82.35% | **0.8176** |
 
+### Patient-Level Bootstrap Confidence Intervals
+
+Uncertainty in the main classification results was estimated using 10,000
+stratified patient-level bootstrap samples with seed `20260805`. Each bootstrap
+replicate sampled 17 benign and 30 malignant test patients with replacement.
+Values below show the observed result followed by the percentile 95% confidence
+interval.
+
+| Experiment | Accuracy (95% CI) | Balanced Accuracy (95% CI) | Sensitivity (95% CI) | Specificity (95% CI) | ROC AUC (95% CI) |
+|---|---:|---:|---:|---:|---:|
+| LG-CAFN-R9 baseline | 63.83% (51.06–76.60) | 65.29% (51.47–79.12) | 60.00% (43.33–76.67) | 70.59% (47.06–88.24) | 0.7510 (0.5745–0.9000) |
+| LG-CAFN-R17 baseline | 63.83% (63.83–63.83) | 50.00% (50.00–50.00) | 100.00% (100.00–100.00) | 0.00% (0.00–0.00) | 0.7627 (0.6157–0.8882) |
+| LG-CAFN-R9+ | 74.47% (61.70–85.11) | 78.73% (67.84–88.33) | 63.33% (46.67–80.00) | 94.12% (82.35–100.00) | 0.8059 (0.6686–0.9176) |
+| LG-CAFN-R17+ | 76.60% (63.83–87.23) | 77.84% (65.29–89.12) | 73.33% (56.67–90.00) | 82.35% (64.71–100.00) | 0.8176 (0.6784–0.9373) |
+
+The R17 baseline has zero-width intervals for its threshold-dependent metrics
+because it classified every patient as malignant and every stratified bootstrap
+sample retained the same 30 malignant and 17 benign patients. Its AUC interval
+remains variable because AUC measures probability ranking rather than the fixed
+classification decision.
+
 Class weighting, differential learning rates, and gradual fine-tuning improved
-both reconstructed models. R17+ produced the highest accuracy and ROC AUC,
-while R9+ produced the highest balanced accuracy and specificity. The improved
+both reconstructed models. R17+ produced the highest observed accuracy and ROC AUC, while R9+ produced the highest observed balanced accuracy and specificity. However, every paired
+R17+-versus-R9+ bootstrap interval included zero, so this analysis does not
+establish that either improved model is definitively superior overall. The improved
 R17 model also corrected the baseline model's collapse to predicting every test
 patient as malignant.
 
