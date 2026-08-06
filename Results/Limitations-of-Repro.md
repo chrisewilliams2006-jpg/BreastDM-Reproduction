@@ -786,6 +786,22 @@ For segmentation, patient-level aggregation or patient-level bootstrap sampling 
 
 Resampling ROIs or slices independently would ignore within-patient correlation and could produce confidence intervals that are too narrow.
 
+### Classification Bootstrap Analysis
+
+The main classification metrics were subsequently evaluated with 10,000
+stratified patient-level bootstrap samples. Each sample preserved the test-set
+composition of 17 benign and 30 malignant patients.
+
+These intervals quantify uncertainty associated with the finite test-patient
+sample. They do not quantify variability caused by random model initialization,
+training seeds, checkpoint selection, hyperparameter selection, or alternative
+patient splits. Each configuration still represents one recorded training run.
+
+Because only 17 benign patients were available, specificity remains particularly
+sensitive to a small number of cases. One benign patient changes specificity by
+approximately 5.88 percentage points. Similarly, one malignant patient changes
+sensitivity by approximately 3.33 percentage points.
+
 ---
 
 # Final Conclusion
