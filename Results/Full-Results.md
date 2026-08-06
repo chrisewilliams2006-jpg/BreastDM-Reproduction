@@ -56,6 +56,28 @@ and percentile 95% confidence intervals.
 | LG-CAFN-R9+ | 74.47% (61.70–85.11) | 78.73% (67.84–88.33) | 63.33% (46.67–80.00) | 94.12% (82.35–100.00) | 0.8059 (0.6686–0.9176) |
 | LG-CAFN-R17+ | 76.60% (63.83–87.23) | 77.84% (65.29–89.12) | 73.33% (56.67–90.00) | 82.35% (64.71–100.00) | 0.8176 (0.6784–0.9373) |
 
+### Paired Model Comparisons
+
+Because every model was evaluated on the same 47 patients, the bootstrap used
+the same sampled patients for both models in each paired comparison.
+
+- R9+ improved balanced accuracy over R9 by 13.43 percentage points
+  (95% CI: 0.88–27.25).
+- R9+ improved specificity over R9 by 23.53 percentage points
+  (95% CI: 5.88–47.06).
+- R17+ improved balanced accuracy over R17 by 27.84 percentage points
+  (95% CI: 15.29–39.12).
+- R17+ improved specificity over R17 by 82.35 percentage points
+  (95% CI: 64.71–100.00).
+- The paired AUC intervals for both baseline-to-improved comparisons included
+  zero.
+- Every paired comparison between R17+ and R9+ included zero.
+
+The bootstrap therefore supports improved balanced accuracy and specificity
+relative to the corresponding baselines. It does not establish a reliable AUC
+difference between the baseline and improved models, or overall superiority of
+R17+ over R9+.
+
 ### Exact Validation-Selected Thresholds
 
 | Experiment | Validation-selected threshold | Validation sensitivity | Validation specificity | Validation Youden J |
@@ -287,7 +309,11 @@ one recorded run per configuration, and a test set of only 47 patients.
   scanner, acquisition protocol, or patient population.
 - These experiments do not establish clinical usefulness.
 
-## Proposed Statistical Reporting
+## Statistical Reporting
+
+The main classification results now include patient-level bootstrap confidence
+intervals. Repeated training seeds remain future work because bootstrap
+resampling measures test-patient uncertainty, not training-run variability.
 
 Future result tables should report uncertainty rather than only point estimates.
 
