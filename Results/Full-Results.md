@@ -42,6 +42,19 @@ malignant, not from meaningful class separation.
 
 The validation-selected threshold changes the operating point but not AUC, because AUC evaluates ranking across thresholds. For R17+, the Youden threshold may be useful when false negatives are considered substantially more costly, but the fixed threshold generalized better as a balanced default.
 
+## Patient-Level Bootstrap Confidence Intervals
+
+The main fixed-threshold classification metrics were evaluated using 10,000
+stratified patient-level bootstrap samples. Each replicate sampled 17 benign
+and 30 malignant patients with replacement. The bootstrap used seed `20260805`
+and percentile 95% confidence intervals.
+
+| Experiment | Accuracy (95% CI) | Balanced Accuracy (95% CI) | Sensitivity (95% CI) | Specificity (95% CI) | ROC AUC (95% CI) |
+|---|---:|---:|---:|---:|---:|
+| LG-CAFN-R9 baseline | 63.83% (51.06–76.60) | 65.29% (51.47–79.12) | 60.00% (43.33–76.67) | 70.59% (47.06–88.24) | 0.7510 (0.5745–0.9000) |
+| LG-CAFN-R17 baseline | 63.83% (63.83–63.83) | 50.00% (50.00–50.00) | 100.00% (100.00–100.00) | 0.00% (0.00–0.00) | 0.7627 (0.6157–0.8882) |
+| LG-CAFN-R9+ | 74.47% (61.70–85.11) | 78.73% (67.84–88.33) | 63.33% (46.67–80.00) | 94.12% (82.35–100.00) | 0.8059 (0.6686–0.9176) |
+| LG-CAFN-R17+ | 76.60% (63.83–87.23) | 77.84% (65.29–89.12) | 73.33% (56.67–90.00) | 82.35% (64.71–100.00) | 0.8176 (0.6784–0.9373) |
 
 ### Exact Validation-Selected Thresholds
 
