@@ -63,21 +63,17 @@ leakage-corrected patient split.
 
 ## Segmentation Results
 
-The available segmentation histories support the following validation results:
+The validation-selected U-Net, FCN-ResNet50, and improved UNeXt checkpoints were evaluated on the same test set using one shared evaluator, a fixed threshold of `0.5`, and consistent metric definitions. The test set contains 4,284 images from 35 patients, with no patient overlap between the training, validation, and test splits.
 
-| Experiment | Best validation Dice | Best-Dice epoch | Additional validation result |
-|---|---:|---:|---|
-| U-Net first trial | **58.46%** | 3 | Recoverable checkpoint; training interrupted during epoch 9; validation-only |
-| Legacy U-Net history | **67.57%** | 10 | 14-epoch history available; corresponding checkpoint and run provenance not confirmed |
-| FCN | 62.73% | 23 | IoU 52.59% |
-| UNeXt | 54.55% | 3 | Best recorded IoU 45.05% at epoch 11 |
+| Model | Global foreground Dice | Global foreground IoU | Mean patient Dice | Mean patient IoU | Macro mIoU |
+|---|---:|---:|---:|---:|---:|
+| UNeXt improved | **66.27%** | **49.55%** | 56.11% | 43.21% | **74.69%** |
+| FCN-ResNet50 | 59.61% | 42.46% | 46.43% | 34.67% | 71.13% |
+| U-Net first trial | 59.31% | 42.15% | **58.07%** | **45.77%** | 70.99% |
 
-An executed Colab experiment previously recorded a UNeXt test Dice of 58.84%,
-compared with the paper-reported 70.10%. That result is retained as a legacy
-Colab result because the current result bundle does not contain the associated
-test-prediction CSV. The segmentation models should not be ranked conclusively
-until all saved checkpoints are evaluated with one shared test evaluator and
-identical metric definitions.
+These are test-set results rather than validation-only results. The shared evaluator, executed notebook, metric configuration, dataset and checkpoint hashes, and direct comparison table are preserved in the refactored repository.
+
+The detailed per-image and per-patient prediction exports were written to ephemeral Colab storage because of an output-path error and could not be recovered after the runtime ended. Therefore, the aggregate comparison is preserved, but the requested detailed segmentation prediction files are not available.
 
 ### Matched Segmentation Test Evaluation
 
@@ -112,8 +108,10 @@ foreground IoU. It should not be interpreted as tumor IoU.
   gap.
 - Validation AUC was consistently higher than test AUC, highlighting the
   uncertainty created by a validation set of only 19 patients.
-- The results are preliminary single-run findings and should be followed by
-  repeated seeds, patient-level confidence intervals, and external validation.
+- The results remain preliminary single-run findings. Patient-level bootstrap
+  confidence intervals have been calculated for the main classification
+  results, but repeated-seed experiments and external validation remain future work.
+  
 ---
 
 ## Improved-Model Disclosure
