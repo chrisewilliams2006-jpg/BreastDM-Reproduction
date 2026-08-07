@@ -145,3 +145,37 @@ preprocessing, architecture, and evaluation decision, so direct numerical
 comparison must be interpreted cautiously. These results do not establish
 clinical usefulness or generalization to other institutions, scanners, or
 patient populations.
+
+## Ground Truth vs. Paper Reports vs. My Independent Model outputs:
+
+### Classification
+
+All reproduced classification results use the same ground-truth test set of **47 patients: 30 malignant and 17 benign**. Differences are calculated as **model output − paper-reported value**, so negative values indicate lower performance than the paper.
+
+| Model output | Ground-truth evaluation set | Accuracy | AUC | Δ Accuracy vs. Paper Group 1 (88.20%) | Δ AUC vs. Paper Group 1 (0.9154) | Δ Accuracy vs. Paper Group 2 (83.93%) | Δ AUC vs. Paper Group 2 (0.8826) |
+|---|---|---:|---:|---:|---:|---:|---:|
+| LG-CAFN-R9 baseline | 47 patients (30 malignant, 17 benign) | 63.83% | 0.7510 | -24.37 pp | -0.1644 | -20.10 pp | -0.1316 |
+| LG-CAFN-R17 baseline | 47 patients (30 malignant, 17 benign) | 63.83% | 0.7627 | -24.37 pp | -0.1527 | -20.10 pp | -0.1199 |
+| LG-CAFN-R9+ | 47 patients (30 malignant, 17 benign) | 74.47% | 0.8059 | -13.73 pp | -0.1095 | -9.46 pp | -0.0767 |
+| **LG-CAFN-R17+** | 47 patients (30 malignant, 17 benign) | **76.60%** | **0.8176** | **-11.60 pp** | **-0.0978** | **-7.33 pp** | **-0.0650** |
+
+### Classification Reference Values
+
+| Source | Accuracy | AUC |
+|---|---:|---:|
+| Ground truth / perfect classification | 100.00% | 1.0000 |
+| Paper-reported LG-CAFN Group 1 | 88.20% | 0.9154 |
+| Paper-reported LG-CAFN Group 2 | 83.93% | 0.8826 |
+| Best reproduced model (LG-CAFN-R17+) | 76.60% | 0.8176 |
+
+### Segmentation
+
+The shared segmentation evaluation used the same ground-truth set of **4,284 test images from 35 patients**. Differences are calculated as **model output − paper-reported value**.
+
+| Model | Ground-truth evaluation set | Paper Dice | Model global foreground Dice | Δ Dice | Paper mIoU | Model macro mIoU | Δ mIoU |
+|---|---|---:|---:|---:|---:|---:|---:|
+| UNeXt | 4,284 images / 35 patients | 70.10% | 66.27% | -3.83 pp | 78.50% | 74.69% | -3.81 pp |
+| FCN-ResNet50 | 4,284 images / 35 patients | 71.10% | 59.61% | -11.49 pp | 77.70% | 71.13% | -6.57 pp |
+| U-Net first trial | 4,284 images / 35 patients | Not reported | 59.31% | N/A | Not reported | 70.99% | N/A |
+
+> **Interpretation note:** The paper groups are not known to map directly onto the R9 and R17 classification experiments. The segmentation comparisons should also be interpreted cautiously because the paper does not fully document its class averaging, aggregation, threshold, preprocessing, or empty-mask policy. In particular, paper-reported mIoU may not use exactly the same definition as the reproduced macro mIoU.
